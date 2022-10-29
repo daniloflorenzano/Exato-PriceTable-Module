@@ -1,0 +1,72 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExatoDigital.OpenSource.PriceTableModule.Domain", "ExatoDigital.OpenSource.PriceTableModule.Domain", "{891A1BD2-1101-4FCA-9D4D-A31F755DA13B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExatoDigital.OpenSource.PriceTableModule.Domain", "ExatoDigital.OpenSource.PriceTableModule.Domain\ExatoDigital.OpenSource.PriceTableModule.Domain.csproj", "{D8283B10-8DBD-4D4A-80E0-6E8144114E5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExatoDigital.OpenSource.PriceTableModule.Core", "ExatoDigital.OpenSource.PriceTableModule.Core", "{8873EC90-879B-452C-A8CC-A38C3D479C08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExatoDigital.OpenSource.PriceTableModule.Repository", "ExatoDigital.OpenSource.PriceTableModule.Repository", "{D5BB8C2D-64B7-40BF-8AFF-5E65FA53A3FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExatoDigital.OpenSource.PriceTableModule.Repository.Memory", "ExatoDigital.OpenSource.PriceTableModule.Repository.Memory", "{32E62713-1D21-4E95-91E2-98B7B160D267}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExatoDigital.OpenSource.PriceTableModule.Repository.PostgreSql", "ExatoDigital.OpenSource.PriceTableModule.Repository.PostgreSql", "{E3A29D2A-3E86-41F5-8736-DC19BA9A0F98}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExatoDigital.OpenSource.PriceTableModule.Tests", "ExatoDigital.OpenSource.PriceTableModule.Tests", "{43972DCB-A50D-4D76-A8AA-DE215DE8C8D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExatoDigital.OpenSource.TablePriceModule.Core", "ExatoDigital.OpenSource.TablePriceModule.Core\ExatoDigital.OpenSource.TablePriceModule.Core.csproj", "{75F5E8B1-8508-4D0B-9571-8918F9927E2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExatoDigital.OpenSource.AccountModule.Repository", "ExatoDigital.OpenSource.AccountModule.Repository\ExatoDigital.OpenSource.AccountModule.Repository.csproj", "{38668E72-D27C-46B7-8EA9-68F09318E68E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExatoDigital.OpenSource.PriceTableModule.Repository.Memory", "ExatoDigital.OpenSource.PriceTableModule.Repository.Memory\ExatoDigital.OpenSource.PriceTableModule.Repository.Memory\ExatoDigital.OpenSource.PriceTableModule.Repository.Memory.csproj", "{5AB450A2-BD96-4052-80B7-55F491B6D1A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExatoDigital.OpenSource.PriceTableModule.Repository.PostgreSql", "ExatoDigital.OpenSource.PriceTableModule.Repository.PostgreSql\ExatoDigital.OpenSource.PriceTableModule.Repository.PostgreSql\ExatoDigital.OpenSource.PriceTableModule.Repository.PostgreSql.csproj", "{21664C25-5957-4CCC-92E6-B536861F1D58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExatoDigital.OpenSource.PriceTableModule.Repository.Tests", "ExatoDigital.OpenSource.PriceTableModule.Repository.Tests\ExatoDigital.OpenSource.PriceTableModule.Repository.Tests.csproj", "{64E61B13-4C0A-4F3D-9184-59198C91FF2E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D8283B10-8DBD-4D4A-80E0-6E8144114E5D} = {891A1BD2-1101-4FCA-9D4D-A31F755DA13B}
+		{75F5E8B1-8508-4D0B-9571-8918F9927E2E} = {8873EC90-879B-452C-A8CC-A38C3D479C08}
+		{38668E72-D27C-46B7-8EA9-68F09318E68E} = {D5BB8C2D-64B7-40BF-8AFF-5E65FA53A3FE}
+		{5AB450A2-BD96-4052-80B7-55F491B6D1A5} = {32E62713-1D21-4E95-91E2-98B7B160D267}
+		{21664C25-5957-4CCC-92E6-B536861F1D58} = {E3A29D2A-3E86-41F5-8736-DC19BA9A0F98}
+		{64E61B13-4C0A-4F3D-9184-59198C91FF2E} = {43972DCB-A50D-4D76-A8AA-DE215DE8C8D5}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8283B10-8DBD-4D4A-80E0-6E8144114E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8283B10-8DBD-4D4A-80E0-6E8144114E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8283B10-8DBD-4D4A-80E0-6E8144114E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8283B10-8DBD-4D4A-80E0-6E8144114E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75F5E8B1-8508-4D0B-9571-8918F9927E2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75F5E8B1-8508-4D0B-9571-8918F9927E2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75F5E8B1-8508-4D0B-9571-8918F9927E2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75F5E8B1-8508-4D0B-9571-8918F9927E2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38668E72-D27C-46B7-8EA9-68F09318E68E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38668E72-D27C-46B7-8EA9-68F09318E68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38668E72-D27C-46B7-8EA9-68F09318E68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38668E72-D27C-46B7-8EA9-68F09318E68E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AB450A2-BD96-4052-80B7-55F491B6D1A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AB450A2-BD96-4052-80B7-55F491B6D1A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AB450A2-BD96-4052-80B7-55F491B6D1A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AB450A2-BD96-4052-80B7-55F491B6D1A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21664C25-5957-4CCC-92E6-B536861F1D58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21664C25-5957-4CCC-92E6-B536861F1D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21664C25-5957-4CCC-92E6-B536861F1D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21664C25-5957-4CCC-92E6-B536861F1D58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E61B13-4C0A-4F3D-9184-59198C91FF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E61B13-4C0A-4F3D-9184-59198C91FF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E61B13-4C0A-4F3D-9184-59198C91FF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E61B13-4C0A-4F3D-9184-59198C91FF2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
