@@ -1,4 +1,4 @@
-﻿namespace ExatoDigital.OpenSource.PriceTableModule.Domain.Table
+﻿namespace Domain.Table
 {
     public enum TableType : int
     {

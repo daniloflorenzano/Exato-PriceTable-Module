@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExatoDigital.OpenSource.PriceTableModule.Domain.Table
+namespace Domain.Table
 {
     public class Table : Entity
     {

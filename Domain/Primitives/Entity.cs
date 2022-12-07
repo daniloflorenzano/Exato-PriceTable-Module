@@ -1,4 +1,4 @@
-﻿namespace ExatoDigital.OpenSource.PriceTableModule.Domain
+﻿namespace Domain
 {
     public abstract class Entity
     {
