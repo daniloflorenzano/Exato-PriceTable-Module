@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Enums;
 
-namespace Domain.Item
+namespace Domain
 {
-    internal class Item : Entity
+    public class Item : Entity
     {
         public readonly Guid ExternalId = Guid.NewGuid();
 

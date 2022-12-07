@@ -1,4 +1,4 @@
-﻿namespace Domain.Item
+﻿namespace Domain.Enums
 {
     public enum ItemType : int
     {
