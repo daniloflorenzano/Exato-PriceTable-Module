@@ -2,7 +2,7 @@
 
 public interface IRepository
 {
-    public Task CreateTable();
+    public Task<Table> CreateTable(Table table);
     public Task<Table[]> ListTables();
     public Task<Table> GetTableByExternalId();
     public Task DeleteTable();

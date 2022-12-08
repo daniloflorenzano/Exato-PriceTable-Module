@@ -13,7 +13,8 @@ public class PostgreRepository : IRepository
     }
 
     public ApplicationDbContext DbContext => _dbContext;
-    public Task CreateTable()
+
+    public async Task<Table> CreateTable(Table table)
     {
         throw new NotImplementedException();
     }
