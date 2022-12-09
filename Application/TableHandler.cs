@@ -1,5 +1,4 @@
-﻿using Application.Abstractions;
-using Domain;
+﻿using Domain;
 using Domain.Abstractions;
 
 namespace Application;
@@ -16,9 +15,32 @@ public class TableHandler
     public async Task<Table> CreateTable(Table table)
     {
         var repository = _repositoryFactory.Create();
-        var newTable = await repository.CreateTable(table);
+
+        var existingTables = await repository.ListTables();
+        foreach (var t in existingTables)
+        {
+            if (t.Name == table.Name && t.Type != table.Type)
+                throw new Exception($"Already exists a table named {table.Name}, but with a different type");
+        }
         
-        return newTable;
+        var existingTableWithSameNameAndType = await ExistingTableWithSameNameAndType(table);
+        
+        return existingTableWithSameNameAndType ?? await repository.CreateTable(table);
     }
-    
+
+    private async Task<Table?> ExistingTableWithSameNameAndType(Table table)
+    {
+        var repository = _repositoryFactory.Create();
+        var existingTables = await repository.ListTables();
+
+        Table existingTable = null;
+        
+        foreach (Table t in existingTables)
+        {
+            if (t.Name == table.Name && t.Type == table.Type)
+                existingTable = t;
+        }
+
+        return existingTable;
+    }
 }

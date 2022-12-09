@@ -17,13 +17,19 @@ namespace Domain
         public bool Active { get; set; }
         public DateTime? ExpirationDate { get; set;}
 
-        public Table(string name, string? description, DateTime? expirationDate, TableType type = 0, bool active = true)
+        public Table(string name, string? description, DateTime? expirationDate, TableType type, bool active = true)
         {
             Name = name;
             Description = description;
             ExpirationDate = expirationDate;
             Type = type;
             Active = active;
+        }
+
+        public Table(string name, TableType type)
+        {
+            Name = name;
+            Type = type;
         }
     }
 }
