@@ -3,7 +3,7 @@ using Domain.Abstractions;
 
 namespace Application;
 
-public class TableHandler : ITableHandler
+public class TableHandler
 {
     private readonly IRepositoryFactory _repositoryFactory;
 
