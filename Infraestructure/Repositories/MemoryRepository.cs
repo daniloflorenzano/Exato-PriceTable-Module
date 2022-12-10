@@ -5,11 +5,6 @@ namespace Infraestructure.Repositories;
 
 public class MemoryRepository : IRepository
 {
-    public Task CreateTable()
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<Table> CreateTable(Table table)
     {
         throw new NotImplementedException();
@@ -20,12 +15,17 @@ public class MemoryRepository : IRepository
         throw new NotImplementedException();
     }
 
-    public Task<Table> GetTableByExternalId()
+    public Task<Table> GetTableByExternalId(Guid externalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteTable()
+    public Task UpdateTable(Guid externalId, Table table)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteTable(Guid externalId)
     {
         throw new NotImplementedException();
     }

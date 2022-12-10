@@ -24,6 +24,21 @@ public class PostgreRepository : IRepository
         throw new NotImplementedException();
     }
 
+    public Task<Table> GetTableByExternalId(Guid externalId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateTable(Guid externalId, Table table)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteTable(Guid externalId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Table> GetTableByExternalId()
     {
         throw new NotImplementedException();
