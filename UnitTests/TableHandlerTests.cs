@@ -86,26 +86,28 @@ public class TableHandlerTests
     }
 
     [Test]
-    public async Task CreateTable_Returns_Exisiting_Table_If_Name_And_Type_Are_Equal()
+    public async Task CreateTable_Throws_Exception_When_Trying_Create_Identical_Table()
     {
         // Arrange
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
         var tableHandler = new TableHandler(_repositoryFactory);
-        var table = new Table("Tabela", TableType.CumulativePrice);
+        var table = new Table("Tabela", TableType.FixedPrice);
         A.CallTo(() => repository.ListTables()).Returns(new Table[] { table });
         
         // Act
-        var table1 = await tableHandler.CreateTable(table);
-        var table2 = await tableHandler.CreateTable(table);
-        
-        // Assert
-        table1.ExternalId.Should().Be(table2.ExternalId);
+        var tableWithSameNameAndType = new Table("Tabela", TableType.FixedPrice);
+        Func<Task> func = async () => await tableHandler.CreateTable(tableWithSameNameAndType);
+
+        // Assert  
+        await func.Should()
+            .ThrowAsync<Exception>()
+            .WithMessage($"Already exists a table named {tableWithSameNameAndType.Name} with this same type");
     }
 
     [Test]
     
-    public async Task CreateTable_Throws_Error_When_Trying_Create_With_Existing_Name_But_Different_Type()
+    public async Task CreateTable_Throws_Exception_When_Trying_Create_With_Existing_Name_But_Different_Type()
     {
         // Arrange
         var repository = A.Fake<IRepository>();

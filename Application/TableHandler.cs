@@ -34,9 +34,11 @@ public class TableHandler
 
         await VerifyTableWithSameNameButDifferentType(table);
         
-        var existingTableWithSameNameAndType = await ExistingTableWithSameNameAndType(table);
+        var existsTableWithSameNameAndType = await ExistsTableWithSameNameAndType(table);
+        if (existsTableWithSameNameAndType is true)
+            throw new Exception($"Already exists a table named {table.Name} with this same type");
         
-        return existingTableWithSameNameAndType ?? await repository.CreateTable(table);
+        return await repository.CreateTable(table);
     }
 
     public async Task<Table> UpdateTable(Guid tableExternalId, Table table)
@@ -68,7 +70,7 @@ public class TableHandler
         }
     }
 
-    private async Task<Table?> ExistingTableWithSameNameAndType(Table table)
+    private async Task<bool> ExistsTableWithSameNameAndType(Table table)
     {
         var existingTables = await ListTables();
 
@@ -80,6 +82,9 @@ public class TableHandler
                 existingTable = t;
         }
 
-        return existingTable;
+        if (existingTable is not null)
+            return true;
+
+        return false;
     }
 }
