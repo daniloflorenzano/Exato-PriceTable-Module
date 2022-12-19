@@ -10,7 +10,7 @@ public class MemoryRepository : IRepository
         throw new NotImplementedException();
     }
 
-    public Task<Table[]> ListTables()
+    public Table[] ListTables()
     {
         throw new NotImplementedException();
     }

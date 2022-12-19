@@ -4,8 +4,8 @@ namespace Domain
 {
     public class Table : Entity
     {
-        public readonly Guid ExternalId = Guid.NewGuid();
         public readonly DateTime CreationDate = DateTime.Now;
+        public Guid ExternalId = Guid.NewGuid();
 
         public string Name { get; set; }
         public string? Description { get; set; }
