@@ -26,7 +26,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory);
 
         // Act
-        await tableHandler.ListTables();
+        tableHandler.ListTables();
 
         // Assert
         A.CallTo(() => repository.ListTables())
@@ -85,47 +85,6 @@ public class TableHandlerTests
             .MustHaveHappened(1, Times.Exactly);
     }
 
-    [Test]
-    public async Task CreateTable_Throws_Exception_When_Trying_Create_Identical_Table()
-    {
-        // Arrange
-        var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory);
-        var table = new Table("Tabela", TableType.FixedPrice);
-        A.CallTo(() => repository.ListTables()).Returns(new Table[] { table });
-        
-        // Act
-        var tableWithSameNameAndType = new Table("Tabela", TableType.FixedPrice);
-        Func<Task> func = async () => await tableHandler.CreateTable(tableWithSameNameAndType);
-
-        // Assert  
-        await func.Should()
-            .ThrowAsync<Exception>()
-            .WithMessage($"Already exists a table named {tableWithSameNameAndType.Name} with this same type");
-    }
-
-    [Test]
-    
-    public async Task CreateTable_Throws_Exception_When_Trying_Create_With_Existing_Name_But_Different_Type()
-    {
-        // Arrange
-        var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory);
-        var table = new Table("Tabela", TableType.CumulativePrice);
-        A.CallTo(() => repository.ListTables()).Returns(new Table[] { table });
-        
-        // Act
-        var tableWithSameNameButDifferentType = new Table("Tabela", TableType.FixedPrice);
-        Func<Task> func = async () => await tableHandler.CreateTable(tableWithSameNameButDifferentType);
-
-        // Assert  
-        await func.Should()
-            .ThrowAsync<Exception>()
-            .WithMessage($"Already exists a table named {tableWithSameNameButDifferentType.Name}, but with a different type");
-    }
-    
     [Test]
     public async Task UpdateTable_Is_Calling_Repository_UpdateTable()
     {

@@ -12,33 +12,51 @@ public class TableHandler
         _repositoryFactory = repositoryFactory ?? throw new ArgumentNullException(nameof(repositoryFactory));
     }
 
-    public async Task<Table[]> ListTables()
+    public Table[] ListTables()
     {
-        var repository = _repositoryFactory.Create();
-        var result = await repository.ListTables();
+        try
+        {
+            var repository = _repositoryFactory.Create();
+            var result = repository.ListTables();
 
-        return result;
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<Table> GetTableByExternalId(Guid externalId)
     {
-        var repository = _repositoryFactory.Create();
-        var result = await repository.GetTableByExternalId(externalId);
+        try
+        {
+            var repository = _repositoryFactory.Create();
+            var result = await repository.GetTableByExternalId(externalId);
 
-        return result;
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
     public async Task<Table> CreateTable(Table table)
     {
-        var repository = _repositoryFactory.Create();
+        try
+        {
+            var repository = _repositoryFactory.Create();
 
-        await VerifyTableWithSameNameButDifferentType(table);
-        
-        var existsTableWithSameNameAndType = await ExistsTableWithSameNameAndType(table);
-        if (existsTableWithSameNameAndType is true)
-            throw new Exception($"Already exists a table named {table.Name} with this same type");
-        
-        return await repository.CreateTable(table);
+            return await repository.CreateTable(table);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<Table> UpdateTable(Guid tableExternalId, Table table)
@@ -46,9 +64,6 @@ public class TableHandler
         var repository = _repositoryFactory.Create();
         var foundedTable = await repository.GetTableByExternalId(tableExternalId);
 
-        if (foundedTable is null)
-            throw new Exception($"Table with ExternalId: {tableExternalId} not founded");
-        
         await repository.UpdateTable(tableExternalId, table);
         return table;
     }
@@ -57,34 +72,5 @@ public class TableHandler
     {
         var repository = _repositoryFactory.Create();
         await repository.DeleteTable(externalId);
-    }
-
-    private async Task VerifyTableWithSameNameButDifferentType(Table table)
-    {
-        var message = $"Already exists a table named {table.Name}, but with a different type";
-        var existingTables = await ListTables();
-        foreach (var t in existingTables)
-        {
-            if (t.Name == table.Name && t.Type != table.Type)
-                throw new Exception(message);
-        }
-    }
-
-    private async Task<bool> ExistsTableWithSameNameAndType(Table table)
-    {
-        var existingTables = await ListTables();
-
-        Table existingTable = null;
-        
-        foreach (Table t in existingTables)
-        {
-            if (t.Name == table.Name && t.Type == table.Type)
-                existingTable = t;
-        }
-
-        if (existingTable is not null)
-            return true;
-
-        return false;
     }
 }
