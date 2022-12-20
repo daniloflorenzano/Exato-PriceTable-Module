@@ -44,13 +44,15 @@ public class TableHandler
         }
     }
     
-    public async Task<Table> CreateTable(Table table)
+    public async Task<ItemHandler> CreateTable(Table table)
     {
         try
         {
             var repository = _repositoryFactory.Create();
-
-            return await repository.CreateTable(table);
+            await repository.CreateTable(table);
+            
+            // permite fazer as operacoes com itens na nova tabela criada
+            return new ItemHandler(_repositoryFactory, table.ExternalId);
         }
         catch (Exception e)
         {
@@ -59,18 +61,31 @@ public class TableHandler
         }
     }
 
-    public async Task<Table> UpdateTable(Guid tableExternalId, Table table)
+    public async Task UpdateTable(Guid tableExternalId, Table table)
     {
-        var repository = _repositoryFactory.Create();
-        var foundedTable = await repository.GetTableByExternalId(tableExternalId);
-
-        await repository.UpdateTable(tableExternalId, table);
-        return table;
+        try
+        {
+            var repository = _repositoryFactory.Create();
+            await repository.UpdateTable(tableExternalId, table);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task DeleteTable(Guid externalId)
     {
-        var repository = _repositoryFactory.Create();
-        await repository.DeleteTable(externalId);
+        try
+        {
+            var repository = _repositoryFactory.Create();
+            await repository.DeleteTable(externalId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

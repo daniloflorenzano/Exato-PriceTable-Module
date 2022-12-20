@@ -5,7 +5,7 @@ namespace Infraestructure.Repositories;
 
 public class MemoryRepository : IRepository
 {
-    public Task<Table> CreateTable(Table table)
+    public Task CreateTable(Table table)
     {
         throw new NotImplementedException();
     }
@@ -30,22 +30,27 @@ public class MemoryRepository : IRepository
         throw new NotImplementedException();
     }
 
-    public Task CreateItem()
+    public Task CreateItem(Item item, Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Item[]> ListItems()
+    public Task<Item[]> ListItems(Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Item> GetItemByExternalId()
+    public Task<Item> GetItemByExternalId(Guid itemExternalId, Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteItem()
+    public Task UpdateItem(Guid itemExternalId, Item item, Guid tableExternalId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteItem(Guid itemExternalId, Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
