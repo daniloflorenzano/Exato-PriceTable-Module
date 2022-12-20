@@ -15,7 +15,7 @@ public class PostgreRepository : IRepository
 
     public ApplicationDbContext DbContext => _dbContext;
 
-    public async Task<Table> CreateTable(Table table)
+    public async Task CreateTable(Table table)
     {
         var existingTableWithSameName = AlreadyExistsTableWithSameNameButDifferentType(table);
         var existingIdenticalTable = AlreadyExistsTableWithSameNameAndType(table);
@@ -26,10 +26,21 @@ public class PostgreRepository : IRepository
         if (existingIdenticalTable is true)
             throw new Exception($"Already exists a table named {table.Name} with this same type");
 
+        // persiste os dados da tabela em uma tabela "Tables"
         _dbContext.Tables.Add(table);
-        await _dbContext.SaveChangesAsync();
 
-        return table;
+        // realmente cria a tabela no banco de dados com o nome passado
+        await _dbContext.Database.ExecuteSqlRawAsync(@"CREATE TABLE {0} (
+            Id INT PRIMARY KEY IDENTITY,
+            ExternalId UNIQUEIDENTIFIER,
+            Description NVARCHAR(255),
+            Type INT,
+            Price DOUBLE,
+            InitialAmount INT,
+            LimitAmount INT
+        )", table.Name);
+        
+        await _dbContext.SaveChangesAsync();
     }
 
     public Table[] ListTables()
@@ -63,7 +74,6 @@ public class PostgreRepository : IRepository
         _dbContext.Tables.Update(table);
 
         await _dbContext.SaveChangesAsync();
-        
     }
 
     public async Task DeleteTable(Guid externalId)
@@ -76,22 +86,28 @@ public class PostgreRepository : IRepository
         _dbContext.Remove(table);
     }
 
-    public Task CreateItem()
+    public Task CreateItem(Item item, Guid tableExternalId)
+    {
+        // TODO: criar item com query SQL usando nome da tabela pego atraves do ExternalId
+        throw new NotImplementedException();
+    }
+
+    public Task<Item[]> ListItems(Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Item[]> ListItems()
+    public Task<Item> GetItemByExternalId(Guid itemExternalId, Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Item> GetItemByExternalId()
+    public Task UpdateItem(Guid itemExternalId, Item item, Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteItem()
+    public Task DeleteItem(Guid itemExternalId, Guid tableExternalId)
     {
         throw new NotImplementedException();
     }
