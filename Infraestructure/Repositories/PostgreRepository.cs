@@ -13,8 +13,6 @@ public class PostgreRepository : IRepository
         _dbContext = dbContext;
     }
 
-    public ApplicationDbContext DbContext => _dbContext;
-
     public async Task CreateTable(Table table)
     {
         var existingTableWithSameName = AlreadyExistsTableWithSameNameButDifferentType(table);
@@ -31,7 +29,7 @@ public class PostgreRepository : IRepository
 
         // realmente cria a tabela no banco de dados com o nome passado
         await _dbContext.Database.ExecuteSqlRawAsync(@"CREATE TABLE {0} (
-            Id INT PRIMARY KEY IDENTITY,
+            Id SERIAL PRIMARY KEY,
             ExternalId UNIQUEIDENTIFIER,
             Description NVARCHAR(255),
             Type INT,
@@ -86,10 +84,15 @@ public class PostgreRepository : IRepository
         _dbContext.Remove(table);
     }
 
-    public Task CreateItem(Item item, Guid tableExternalId)
+    public async Task CreateItem(Item item, Guid tableExternalId)
     {
-        // TODO: criar item com query SQL usando nome da tabela pego atraves do ExternalId
-        throw new NotImplementedException();
+        var table = await GetTableByExternalId(tableExternalId);
+        var tableName = table.Name;
+
+        await _dbContext.Database
+            .ExecuteSqlRawAsync(@"INSERT INTO {0} (ExternalId, Description, Type, Price, InitialAmount, LimitAmount)
+            VALUES ({1}, {2}, {3}, {4}, {5}, {6})", 
+            tableName, item.ExternalId, item.Description, item.Type, item.Price, item.InitialAmount, item.LimitAmount);
     }
 
     public Task<Item[]> ListItems(Guid tableExternalId)
