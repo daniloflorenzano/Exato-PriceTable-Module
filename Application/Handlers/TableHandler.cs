@@ -1,7 +1,7 @@
 ﻿using Domain;
 using Domain.Abstractions;
 
-namespace Application;
+namespace Application.Handlers;
 
 public class TableHandler
 {
