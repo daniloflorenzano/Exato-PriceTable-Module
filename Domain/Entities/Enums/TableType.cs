@@ -3,7 +3,7 @@
     public enum TableType : int
     {
         FixedPrice,
-        CumulativePrice = 1,
-        NonCumulativePrice = 2
+        CumulativePriceDiscount = 1,
+        NonCumulativePriceDiscount = 2
     }
 }
