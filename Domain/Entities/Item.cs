@@ -5,7 +5,6 @@ namespace Domain
     public class Item : Entity
     {
         public readonly Guid ExternalId = Guid.NewGuid();
-
         public string Description { get; set; }
         public double InitalPrice { get; set; }
         public List<double>? PriceSequence { get; set; }
@@ -35,8 +34,8 @@ namespace Domain
         /// <exception cref="ArgumentException"></exception>
         public Item(string description, double initialPrice, List<double> priceSequence, List<int> amountLimitsToApplyDiscount)
         {
-            if (priceSequence.Count != amountLimitsToApplyDiscount.Count - 1)
-                throw new ArgumentException("priceSequence list must have one more element than changePriceLimits list");
+            if (priceSequence.Count != amountLimitsToApplyDiscount.Count)
+                throw new ArgumentException("priceSequence list must have the same amount of elements as amountLimitsToApplyDiscount");
             
             Description = description;
             InitalPrice = initialPrice;
