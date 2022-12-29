@@ -86,13 +86,15 @@ public class PostgreRepository : IRepository
 
     public async Task CreateItem(Item item, Guid tableExternalId)
     {
-        var table = await GetTableByExternalId(tableExternalId);
-        var tableName = table.Name;
+        // var table = await GetTableByExternalId(tableExternalId);
+        // var tableName = table.Name;
+        //
+        // await _dbContext.Database
+        //     .ExecuteSqlRawAsync(@"INSERT INTO {0} (ExternalId, Description, Type, Price, InitialAmount, LimitAmount)
+        //     VALUES ({1}, {2}, {3}, {4}, {5}, {6})", 
+        //     tableName, item.ExternalId, item.Description, item.Type, item.Price, item.InitialAmount, item.LimitAmount);
 
-        await _dbContext.Database
-            .ExecuteSqlRawAsync(@"INSERT INTO {0} (ExternalId, Description, Type, Price, InitialAmount, LimitAmount)
-            VALUES ({1}, {2}, {3}, {4}, {5}, {6})", 
-            tableName, item.ExternalId, item.Description, item.Type, item.Price, item.InitialAmount, item.LimitAmount);
+        throw new NotImplementedException();
     }
 
     public Task<Item[]> ListItems(Guid tableExternalId)
