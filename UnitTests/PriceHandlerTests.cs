@@ -7,42 +7,30 @@ namespace UnitTests;
 public class PriceHandlerTests
 {
     [Test]
-    public void CalculateTotalWithCumulativePriceDiscount_Should_Return_11()
+    public void CalculateNextUnitPrice_Should_Return_2()
     {
+        var priceSequence = new List<double>() { 5.0, 4.0, 3.0, 2.0 };
+        var amountLimitsToApplyDicount = new List<int>() { 3, 5, 7, 9 };
+        
+        // 11 itens
         var itemsList = new List<Item>()
         {
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0, priceSequence, amountLimitsToApplyDicount),
         };
 
-        var priceHandler = new PriceHandler(1.0, itemsList);
-        var res = priceHandler.CalculateTotalWithCumulativePriceDiscount();
+        var priceHandler = new CumulativePriceDiscountHandler(itemsList);
+        var res = priceHandler.CalculateNextUnitPrice();
 
-        res.Should().Be(11.00);
-    }
-    
-    [Test]
-    public void CalculateTotalWithNonCumulativePriceDiscount_Should_Return_7()
-    {
-        var itemsList = new List<Item>()
-        {
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-            new Item("A", 2.0, 1, 4),
-        };
-
-        var priceHandler = new PriceHandler(1.0, itemsList);
-        var res = priceHandler.CalculateTotalNonCumulativePriceDiscount();
-
-        res.Should().Be(7.00);
+        res.Should().Be(2.0);
     }
 }
