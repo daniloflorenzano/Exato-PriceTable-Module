@@ -5,20 +5,28 @@ namespace Application.Abstractions;
 public abstract class DiscountPriceHandler
 {
     private static List<Item> _items;
+    private double _itemInitialPrice;
+    private List<double> _priceSequence;
+    private List<int> _amountLimitsToApplyDiscount;
+    private int _minimalToApplyDiscount;
 
     public DiscountPriceHandler(List<Item> items)
     {
         _items = items;
+        
+        _itemInitialPrice = _items[0].InitalPrice;
+        _priceSequence = _items[0].PriceSequence;
+        _amountLimitsToApplyDiscount = _items[0].AmountLimitsToApplyDiscount;
+        _minimalToApplyDiscount = _items[0].AmountLimitsToApplyDiscount[0];
     }
-    
-    private double _itemInitialPrice = _items[0].InitalPrice;
-    private List<double> _priceSequence = _items[0].PriceSequence;
-    private List<int> _amountLimitsToApplyDiscount = _items[0].AmountLimitsToApplyDiscount;
-    private int _minimalToApplyDiscount = _items[0].AmountLimitsToApplyDiscount[0];
-    
+
     public abstract double CalculateTotalPrice();
 
-    public double CalculateUnitPrice()
+    /// <summary>
+    /// Calcula qual sera o valor unitario do proximo item a ser adicionado em uma tabela
+    /// </summary>
+    /// <returns></returns>
+    public double CalculateNextUnitPrice()
     {
         var totalItems = _items.Count;
         var price = 0.0;
@@ -31,7 +39,7 @@ public abstract class DiscountPriceHandler
             var limit = _amountLimitsToApplyDiscount[i];
             var priceWithDiscount = _priceSequence[i];
 
-            if (totalItems > limit)
+            if (totalItems + 1 > limit)
                 price = priceWithDiscount;
         }
 
