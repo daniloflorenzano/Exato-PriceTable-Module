@@ -12,6 +12,26 @@ public sealed class NonCumulativePriceDiscountHandler : DiscountPriceHandler
 
     public override double CalculateTotalPrice()
     {
-        throw new NotImplementedException();
+        var previousLimit = 0;
+        var price = 0.0;
+        
+        if (TotalItems < MinimalToApplyDiscount)
+            return ItemInitialPrice;
+        
+        for (int i = 0; i < AmountLimitsToApplyDiscount.Count; i++)
+        {
+            var limit = AmountLimitsToApplyDiscount[i];
+            var priceWithDiscount = PriceSequence[i];
+
+            if (TotalItems + 1 > limit)
+                price += priceWithDiscount * ( limit - previousLimit );
+
+            previousLimit = limit;
+        }
+
+        if (previousLimit == AmountLimitsToApplyDiscount.Last())
+            price += PriceSequence.Last() * ( TotalItems - previousLimit );
+        
+        return price;
     }
 }
