@@ -15,6 +15,20 @@ public sealed class CumulativePriceDiscountHandler : DiscountPriceHandler
 
     public override double CalculateTotalPrice()
     {
-        throw new NotImplementedException();
+        var price = 0.0;
+
+        if (TotalItems < MinimalToApplyDiscount)
+            return TotalItems * ItemInitialPrice;
+
+        for (int i = 0; i < AmountLimitsToApplyDiscount.Count; i++)
+        {
+            var limit = AmountLimitsToApplyDiscount[i];
+            var priceWithDiscount = PriceSequence[i];
+
+            if (TotalItems + 1 > limit)
+                price = priceWithDiscount;
+        }
+
+        return TotalItems * price;
     }
 }
