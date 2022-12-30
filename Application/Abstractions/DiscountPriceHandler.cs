@@ -4,20 +4,19 @@ namespace Application.Abstractions;
 
 public abstract class DiscountPriceHandler
 {
-    private static List<Item> _items;
-    private double _itemInitialPrice;
-    private List<double> _priceSequence;
-    private List<int> _amountLimitsToApplyDiscount;
-    private int _minimalToApplyDiscount;
+    protected readonly int TotalItems;
+    protected readonly double ItemInitialPrice;
+    protected readonly List<double> PriceSequence;
+    protected readonly List<int> AmountLimitsToApplyDiscount;
+    protected readonly int MinimalToApplyDiscount;
 
     public DiscountPriceHandler(List<Item> items)
     {
-        _items = items;
-        
-        _itemInitialPrice = _items[0].InitalPrice;
-        _priceSequence = _items[0].PriceSequence;
-        _amountLimitsToApplyDiscount = _items[0].AmountLimitsToApplyDiscount;
-        _minimalToApplyDiscount = _items[0].AmountLimitsToApplyDiscount[0];
+        TotalItems = items.Count;
+        ItemInitialPrice = items[0].InitalPrice;
+        PriceSequence = items[0].PriceSequence;
+        AmountLimitsToApplyDiscount = items[0].AmountLimitsToApplyDiscount;
+        MinimalToApplyDiscount = items[0].AmountLimitsToApplyDiscount[0];
     }
 
     public abstract double CalculateTotalPrice();
@@ -28,18 +27,17 @@ public abstract class DiscountPriceHandler
     /// <returns></returns>
     public double CalculateNextUnitPrice()
     {
-        var totalItems = _items.Count;
         var price = 0.0;
         
-        if (totalItems < _minimalToApplyDiscount)
-            return _itemInitialPrice;
+        if (TotalItems < MinimalToApplyDiscount)
+            return ItemInitialPrice;
 
-        for (int i = 0; i < _amountLimitsToApplyDiscount.Count; i++)
+        for (int i = 0; i < AmountLimitsToApplyDiscount.Count; i++)
         {
-            var limit = _amountLimitsToApplyDiscount[i];
-            var priceWithDiscount = _priceSequence[i];
+            var limit = AmountLimitsToApplyDiscount[i];
+            var priceWithDiscount = PriceSequence[i];
 
-            if (totalItems + 1 > limit)
+            if (TotalItems + 1 > limit)
                 price = priceWithDiscount;
         }
 
