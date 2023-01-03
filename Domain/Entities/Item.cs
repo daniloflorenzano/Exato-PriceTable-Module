@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using Domain.ValueObjects;
 
 namespace Domain
 {
@@ -6,10 +7,9 @@ namespace Domain
     {
         public readonly Guid ExternalId = Guid.NewGuid();
         public string Description { get; set; }
-        public double InitalPrice { get; set; }
-        public List<double>? PriceSequence { get; set; }
+        public Price Price { get; set; }
+        public List<decimal>? PriceSequence { get; set; }
         public List<int>? AmountLimitsToApplyDiscount { get; set; }
-        public readonly ItemType Type;
 
 
         /// <summary>
@@ -17,11 +17,11 @@ namespace Domain
         /// </summary>
         /// <param name="description">Descrição/Nome do item</param>
         /// <param name="initialPrice">Preço inicial</param>
-        public Item(string description, double initialPrice)
+        /// <param name="costPrice">Preço de custo. Por padrão inicia em 0</param>
+        public Item(string description, decimal initialPrice, decimal costPrice = 0)
         {
             Description = description;
-            InitalPrice = initialPrice;
-            Type = 0;
+            Price = new Price() { InitialValue = initialPrice, CostValue = costPrice };
         }
 
         /// <summary>
@@ -31,14 +31,15 @@ namespace Domain
         /// <param name="initialPrice">Preço inicial</param>
         /// <param name="priceSequence">Sequência de preços que serão aplicados conforme os descontos</param>
         /// <param name="amountLimitsToApplyDiscount">Lista dos limites de quantidade para aplicação dos descontos</param>
+        /// <param name="costPrice">Preço de custo. Por padrão inicia em 0</param>
         /// <exception cref="ArgumentException"></exception>
-        public Item(string description, double initialPrice, List<double> priceSequence, List<int> amountLimitsToApplyDiscount)
+        public Item(string description, decimal initialPrice, List<decimal> priceSequence, List<int> amountLimitsToApplyDiscount, decimal costPrice = 0)
         {
             if (priceSequence.Count != amountLimitsToApplyDiscount.Count)
                 throw new ArgumentException("priceSequence list must have the same amount of elements as amountLimitsToApplyDiscount");
             
             Description = description;
-            InitalPrice = initialPrice;
+            Price = new Price() { InitialValue = initialPrice, CostValue = costPrice };
             PriceSequence = priceSequence;
             AmountLimitsToApplyDiscount = amountLimitsToApplyDiscount;
         }

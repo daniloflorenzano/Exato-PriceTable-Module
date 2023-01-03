@@ -13,9 +13,9 @@ public sealed class CumulativePriceDiscountHandler : DiscountPriceHandler
     {
     }
 
-    public override double CalculateTotalPrice()
+    public override decimal CalculateTotalPrice()
     {
-        var price = 0.0;
+        var price = 0.0m;
 
         if (TotalItems < MinimalToApplyDiscount)
             return TotalItems * ItemInitialPrice;

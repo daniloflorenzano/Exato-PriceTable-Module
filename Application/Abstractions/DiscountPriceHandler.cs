@@ -5,29 +5,29 @@ namespace Application.Abstractions;
 public abstract class DiscountPriceHandler
 {
     protected readonly int TotalItems;
-    protected readonly double ItemInitialPrice;
-    protected readonly List<double> PriceSequence;
+    protected readonly decimal ItemInitialPrice;
+    protected readonly List<decimal> PriceSequence;
     protected readonly List<int> AmountLimitsToApplyDiscount;
     protected readonly int MinimalToApplyDiscount;
 
     public DiscountPriceHandler(List<Item> items)
     {
         TotalItems = items.Count;
-        ItemInitialPrice = items[0].InitalPrice;
+        ItemInitialPrice = items[0].Price.InitialValue;
         PriceSequence = items[0].PriceSequence;
         AmountLimitsToApplyDiscount = items[0].AmountLimitsToApplyDiscount;
         MinimalToApplyDiscount = items[0].AmountLimitsToApplyDiscount[0];
     }
 
-    public abstract double CalculateTotalPrice();
+    public abstract decimal CalculateTotalPrice();
 
     /// <summary>
     /// Calcula qual sera o valor unitario do proximo item a ser adicionado em uma tabela
     /// </summary>
     /// <returns></returns>
-    public double CalculateNextUnitPrice()
+    public decimal CalculateNextUnitPrice()
     {
-        var price = 0.0;
+        var price = 0.0m;
         
         if (TotalItems < MinimalToApplyDiscount)
             return ItemInitialPrice;

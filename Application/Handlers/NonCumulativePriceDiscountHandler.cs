@@ -10,10 +10,10 @@ public sealed class NonCumulativePriceDiscountHandler : DiscountPriceHandler
     {
     }
 
-    public override double CalculateTotalPrice()
+    public override decimal CalculateTotalPrice()
     {
         var previousLimit = 0;
-        var price = 0.0;
+        var price = 0.0m;
         
         if (TotalItems < MinimalToApplyDiscount)
             return ItemInitialPrice;
