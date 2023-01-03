@@ -1,5 +1,6 @@
 ﻿using Application.Handlers;
 using Domain;
+using Domain.Entities;
 using FluentAssertions;
 
 namespace UnitTests;

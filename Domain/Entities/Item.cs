@@ -1,7 +1,7 @@
-﻿using Domain.Enums;
+﻿using Domain.Primitives;
 using Domain.ValueObjects;
 
-namespace Domain
+namespace Domain.Entities
 {
     public class Item : Entity
     {
@@ -21,7 +21,11 @@ namespace Domain
         public Item(string description, decimal initialPrice, decimal costPrice = 0)
         {
             Description = description;
-            Price = new Price() { InitialValue = initialPrice, CostValue = costPrice };
+            Price = new Price()
+            {
+                InitialValue = initialPrice, 
+                CostValue = costPrice
+            };
         }
 
         /// <summary>
@@ -39,7 +43,11 @@ namespace Domain
                 throw new ArgumentException("priceSequence list must have the same amount of elements as amountLimitsToApplyDiscount");
             
             Description = description;
-            Price = new Price() { InitialValue = initialPrice, CostValue = costPrice };
+            Price = new Price()
+            {
+                InitialValue = initialPrice, 
+                CostValue = costPrice
+            };
             PriceSequence = priceSequence;
             AmountLimitsToApplyDiscount = amountLimitsToApplyDiscount;
         }

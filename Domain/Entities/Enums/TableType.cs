@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums
+﻿namespace Domain.Entities.Enums
 {
     public enum TableType : int
     {

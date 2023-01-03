@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions;
-using Domain;
+using Domain.Entities;
 
 namespace Application.Handlers;
 

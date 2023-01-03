@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Abstractions;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;

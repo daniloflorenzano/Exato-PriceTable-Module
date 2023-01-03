@@ -1,6 +1,7 @@
 ﻿using Application.Handlers;
 using Domain;
 using Domain.Abstractions;
+using Domain.Entities;
 using FakeItEasy;
 using FluentAssertions;
 

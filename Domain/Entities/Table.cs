@@ -1,6 +1,7 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities.Enums;
+using Domain.Primitives;
 
-namespace Domain
+namespace Domain.Entities
 {
     public class Table : Entity
     {
