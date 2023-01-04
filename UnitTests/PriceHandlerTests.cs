@@ -1,6 +1,7 @@
 ﻿using Application.Handlers;
 using Domain;
 using Domain.Entities;
+using Domain.Entities.Enums;
 using FluentAssertions;
 
 namespace UnitTests;
@@ -16,17 +17,17 @@ public class PriceHandlerTests
         // 11 itens
         var itemsList = new List<Item>()
         {
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
         };
 
         var priceHandler = new CumulativePriceDiscountHandler(itemsList);
@@ -44,17 +45,17 @@ public class PriceHandlerTests
         // 11 itens
         var itemsList = new List<Item>()
         {
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.CumulativeDiscount),
         };
 
         var priceHandler = new CumulativePriceDiscountHandler(itemsList);
@@ -72,17 +73,17 @@ public class PriceHandlerTests
         // 11 itens
         var itemsList = new List<Item>()
         {
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
-            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
+            new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount, DiscountType.NonCumulativeDiscount),
         };
 
         var priceHandler = new NonCumulativePriceDiscountHandler(itemsList);
