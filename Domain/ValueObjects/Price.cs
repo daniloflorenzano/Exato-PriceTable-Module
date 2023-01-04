@@ -2,6 +2,7 @@
 
 public class Price
 {
-    public decimal CostValue { get; set; }
     public decimal InitialValue { get; set; }
+    public List<decimal> PriceSequence { get; set; }
+    public List<int> AmountLimitsToApplyDiscount { get; set; }
 }

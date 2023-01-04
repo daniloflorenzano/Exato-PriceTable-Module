@@ -14,9 +14,9 @@ public abstract class DiscountPriceHandler
     {
         TotalItems = items.Count;
         ItemInitialPrice = items[0].Price.InitialValue;
-        PriceSequence = items[0].PriceSequence;
-        AmountLimitsToApplyDiscount = items[0].AmountLimitsToApplyDiscount;
-        MinimalToApplyDiscount = items[0].AmountLimitsToApplyDiscount[0];
+        PriceSequence = items[0].Price.PriceSequence;
+        AmountLimitsToApplyDiscount = items[0].Price.AmountLimitsToApplyDiscount;
+        MinimalToApplyDiscount = items[0].Price.AmountLimitsToApplyDiscount[0];
     }
 
     public abstract decimal CalculateTotalPrice();
