@@ -3,7 +3,7 @@ using Domain.Abstractions;
 using Domain.Entities;
 using FakeItEasy;
 using FluentAssertions;
-using Serilog;
+using ILogger = Application.Abstractions.ILogger;
 
 namespace UnitTests;
 

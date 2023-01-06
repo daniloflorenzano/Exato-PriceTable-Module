@@ -1,6 +1,6 @@
-﻿using Domain.Abstractions;
+﻿using Application.Abstractions;
+using Domain.Abstractions;
 using Domain.Entities;
-using Serilog;
 
 namespace Application.Handlers;
 
@@ -25,7 +25,7 @@ public class TableHandler
             _logger.Information("TableHandler.ListTables repository created...");
 
             var result = repository.ListTables();
-            _logger.Information("TableHandler.ListTables: {ResultLength} tables returned", result.Length);
+            _logger.Information($"TableHandler.ListTables: {result.Length} tables returned");
             
             return result;
         }
