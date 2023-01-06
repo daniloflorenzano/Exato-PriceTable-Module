@@ -1,24 +1,32 @@
 ﻿using Domain.Abstractions;
 using Domain.Entities;
+using Serilog;
 
 namespace Application.Handlers;
 
 public class TableHandler
 {
     private readonly IRepositoryFactory _repositoryFactory;
+    private readonly ILogger _logger;
 
-    public TableHandler(IRepositoryFactory repositoryFactory)
+    public TableHandler(IRepositoryFactory repositoryFactory, ILogger logger)
     {
         _repositoryFactory = repositoryFactory ?? throw new ArgumentNullException(nameof(repositoryFactory));
+        _logger = logger;
     }
 
     public Table[] ListTables()
     {
         try
         {
+            _logger.Information("TableHandler.ListTables executing...");
+            
             var repository = _repositoryFactory.Create();
-            var result = repository.ListTables();
+            _logger.Information("TableHandler.ListTables repository created...");
 
+            var result = repository.ListTables();
+            _logger.Information("TableHandler.ListTables: {ResultLength} tables returned", result.Length);
+            
             return result;
         }
         catch (Exception e)

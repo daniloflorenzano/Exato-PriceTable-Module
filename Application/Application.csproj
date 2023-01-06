@@ -14,4 +14,9 @@
       <Folder Include="Exceptions" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.12.1-dev-01635" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00896" />
+    </ItemGroup>
+
 </Project>
