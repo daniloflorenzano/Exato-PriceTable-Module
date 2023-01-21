@@ -36,6 +36,44 @@ public class ExatoPriceTableModule
         }
     }
 
+    public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
+    {
+        try
+        {
+            ItemHandler itemHandler = new(_repositoryFactory, tableExternalId);
+            TableHandler tableHandler = new(_repositoryFactory, _logger);
+            var table = await tableHandler.GetTableByExternalId(tableExternalId);
+            var tableType = table.Type;
+            var items = await itemHandler.ListItemsInTableInDateRange(initialDate, limitDate);
+            var groupsOfItems = itemHandler.SegregateItems(items);
+            var totalPrice = 0.0m;
+
+            foreach (var group in groupsOfItems)
+            {
+                if (tableType == DiscountType.FixedPrice)
+                    totalPrice += group.Count * group[0].Price.InitialValue;
+                
+                if (tableType == DiscountType.CumulativeDiscount)
+                {
+                    CumulativePriceDiscountHandler discountHandler = new(items);
+                    totalPrice += discountHandler.CalculateTotalPrice();
+                }
+                else
+                {
+                    NonCumulativePriceDiscountHandler discountHandler = new(items);
+                    totalPrice += discountHandler.CalculateTotalPrice();
+                }
+            }
+
+            return totalPrice;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private void InitiateDependencyContainer()
     {
         // TODO: ver como sera feita a injecao do DbContext pelo usuario
