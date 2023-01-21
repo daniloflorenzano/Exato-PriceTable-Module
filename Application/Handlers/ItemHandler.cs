@@ -74,4 +74,23 @@ public class ItemHandler
             throw;
         }
     }
+
+    public async Task<List<Item>> ListItemsInTableInDateRange(DateTime initialDate, DateTime limitDate)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public List<List<Item>> SegregateItems(List<Item> items)
+    {
+        var descriptions = items.Select(i => i.Description).Distinct().ToList();
+        var list = new List<List<Item>>();
+
+        for (int i = 0; i < descriptions.Count; i++)
+        {
+            var groupOfItems = items.Where(item => item.Description == descriptions[i]).ToList();
+            list.Add(groupOfItems);
+        }
+
+        return list;
+    }
 }
