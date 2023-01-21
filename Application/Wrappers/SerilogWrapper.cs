@@ -6,10 +6,8 @@ namespace Application.ExternalLibraries;
 
 public sealed class SerilogWrapper : ILogger
 {
-    public void Information(string message)
-    {
+    public void Information(string message) => 
         Initialization().Information(message);
-    }
 
     private Logger Initialization()
     {
