@@ -4,7 +4,7 @@ using Domain.Entities;
 
 namespace Application.Handlers;
 
-public class TableHandler
+public class TableHandler 
 {
     private readonly IRepositoryFactory _repositoryFactory;
     private readonly ILogger _logger;
