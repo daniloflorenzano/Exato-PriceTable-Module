@@ -10,7 +10,6 @@ namespace Domain.Entities
         public string Description { get; set; }
         public Price Price { get; set; }
         public DateTime CreationDate { get; } = DateTime.Now;
-        public DiscountType Type { get; }
 
         /// <summary>
         /// Cria entidade Item para ser usado em tabela de preço fixo.
@@ -21,7 +20,6 @@ namespace Domain.Entities
         {
             Description = description;
             Price = new Price() { InitialValue = initialPrice };
-            Type = DiscountType.FixedPrice;
         }
 
         /// <summary>
@@ -33,7 +31,7 @@ namespace Domain.Entities
         /// <param name="amountLimitsToApplyDiscount">Lista dos limites de quantidade para aplicação dos descontos</param>
         /// <param name="type">Tipo do desconto, cumulativo ou nao cumulativo</param>
         /// <exception cref="ArgumentException"></exception>
-        public Item(string description, decimal initialPrice, List<decimal> priceSequence, List<int> amountLimitsToApplyDiscount, DiscountType type)
+        public Item(string description, decimal initialPrice, List<decimal> priceSequence, List<int> amountLimitsToApplyDiscount)
         {
             if (priceSequence.Count != amountLimitsToApplyDiscount.Count)
                 throw new ArgumentException("priceSequence list must have the same amount of elements as amountLimitsToApplyDiscount");
@@ -45,7 +43,6 @@ namespace Domain.Entities
                 PriceSequence = priceSequence,
                 AmountLimitsToApplyDiscount = amountLimitsToApplyDiscount
             };
-            Type = type;
         }
     }
 }
