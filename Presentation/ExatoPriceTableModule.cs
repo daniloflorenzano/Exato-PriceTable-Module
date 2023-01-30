@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions;
-using Application.ExternalLibraries;
 using Application.Handlers;
+using Application.Wrappers;
 using Domain.Entities;
 using Domain.Entities.Enums;
 using Infraestructure;
@@ -16,7 +16,10 @@ public class ExatoPriceTableModule
     private readonly ILogger _logger = null!;
     private readonly RepositoryFactory _repositoryFactory = new (_applicationDbContext);
 
-    public ExatoPriceTableModule() {}
+    public ExatoPriceTableModule()
+    {
+        
+    }
     
     public async Task CreateTable(string name, string description, DiscountType discountType, DateTime? expirationDate)
     {
@@ -40,30 +43,13 @@ public class ExatoPriceTableModule
     {
         try
         {
-            ItemHandler itemHandler = new(_repositoryFactory, tableExternalId);
+            ItemHandler itemHandler = new (_repositoryFactory, tableExternalId);
             TableHandler tableHandler = new(_repositoryFactory, _logger);
             var table = await tableHandler.GetTableByExternalId(tableExternalId);
             var tableType = table.Type;
             var items = await itemHandler.ListItemsInTableInDateRange(initialDate, limitDate);
             var groupsOfItems = itemHandler.SegregateItems(items);
-            var totalPrice = 0.0m;
-
-            foreach (var group in groupsOfItems)
-            {
-                if (tableType == DiscountType.FixedPrice)
-                    totalPrice += group.Count * group[0].Price.InitialValue;
-                
-                if (tableType == DiscountType.CumulativeDiscount)
-                {
-                    CumulativePriceDiscountHandler discountHandler = new(items);
-                    totalPrice += discountHandler.CalculateTotalPrice();
-                }
-                else
-                {
-                    NonCumulativePriceDiscountHandler discountHandler = new(items);
-                    totalPrice += discountHandler.CalculateTotalPrice();
-                }
-            }
+            var totalPrice = CalculateTotalPriceByTypeOfTable(groupsOfItems, tableType);
 
             return totalPrice;
         }
@@ -72,6 +58,29 @@ public class ExatoPriceTableModule
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    private decimal CalculateTotalPriceByTypeOfTable(List<List<Item>> groupsOfItems, DiscountType tableType)
+    {
+        var totalPrice = 0.0m;
+        foreach (var group in groupsOfItems)
+        {
+            if (tableType == DiscountType.FixedPrice)
+                totalPrice += group.Count * group[0].Price.InitialValue;
+                
+            if (tableType == DiscountType.CumulativeDiscount)
+            {
+                CumulativePriceDiscountHandler discountHandler = new(group);
+                totalPrice += discountHandler.CalculateTotalPrice();
+            }
+            else
+            {
+                NonCumulativePriceDiscountHandler discountHandler = new(group);
+                totalPrice += discountHandler.CalculateTotalPrice();
+            }
+        }
+
+        return totalPrice;
     }
 
     private void InitiateDependencyContainer()
