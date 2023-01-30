@@ -2,12 +2,12 @@
 using Serilog.Core;
 using ILogger = Application.Abstractions.ILogger;
 
-namespace Application.ExternalLibraries;
+namespace Application.Wrappers;
 
 public sealed class SerilogWrapper : ILogger
 {
     public void Information(string message) => 
-        Initialization().Information(message);
+        Initialization().Information("{Message}", message);
 
     private Logger Initialization()
     {
