@@ -9,7 +9,7 @@ namespace Domain.Entities
         public readonly Guid ExternalId = Guid.NewGuid();
         public string Description { get; set; }
         public Price Price { get; set; }
-        public DateTime CreationDate { get; } = DateTime.Now;
+        public DateTime PurchaseDate { get; } = DateTime.Now;
 
         /// <summary>
         /// Cria entidade Item para ser usado em tabela de preço fixo.
