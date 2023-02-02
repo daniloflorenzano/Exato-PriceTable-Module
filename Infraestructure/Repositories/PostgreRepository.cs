@@ -15,16 +15,9 @@ public class PostgreRepository : IRepository
         _dbContext = dbContext;
     }
 
-    public void CreateSchema(string name)
+    public async Task CreateSchema(string name)
     {
-        //var sql = $"SELECT schema_name FROM information_schema.schemata WHERE schema_name = '{name}'";
-        //var result = _dbContext.Database.SqlQueryRaw<string>(sql).FirstOrDefault();
-
-        //if (result is  null)
-
-        //var sql = "SELECT * FROM YourTable WHERE Column1 = @0 AND Column2 = @1";
-        var sql = "CREATE SCHEMA " + name;
-        _dbContext.Database.ExecuteSqlRaw(sql);
+        await _dbContext.Database.ExecuteSqlRawAsync("CREATE SCHEMA " + name);
     }
 
     public async Task CreateTable(Table table)

@@ -9,14 +9,12 @@ using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 
 namespace Presentation;
 
 public class ExatoPriceTableModule
 {
-    //private static readonly ApplicationDbContext _applicationDbContext;
-    private readonly ILogger _logger = null!;
-    //private readonly RepositoryFactory _repositoryFactory;
     private string _connectionString;
 
     public ExatoPriceTableModule(string connectionString)
@@ -26,13 +24,26 @@ public class ExatoPriceTableModule
 
     public async Task CreateSchema(string name)
     {
-        InitiateDependencyContainer(out var dbContext, out var repositoryFactory);
-
-        if (repositoryFactory is null)
-            throw new Exception("deu pau no repositoryFactory");
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
-        var repository = repositoryFactory.Create();
-        repository.CreateSchema(name);
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+        
+        try
+        {
+
+            var repository = repositoryFactory.Create();
+            await repository.CreateSchema(name);
+        }
+        catch (PostgresException e) when(e.Message.Contains("already exists"))
+        {
+            logger.Warning($"{e.Message}, continuing...");
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
     }
     
     public async Task CreateTable(string name, string description, DiscountType discountType, DateTime? expirationDate)
@@ -98,16 +109,15 @@ public class ExatoPriceTableModule
         return totalPrice;
     }
 
-    private void InitiateDependencyContainer(out ApplicationDbContext? dbContext, out IRepositoryFactory? repositoryFactory)
+    private void InitiateDependencyContainer(out IRepositoryFactory? repositoryFactory, out ILogger? logger)
     {
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_connectionString))
-            .AddScoped<IRepositoryFactory, RepositoryFactory>()
+            .AddSingleton<IRepositoryFactory, RepositoryFactory>()
+            .AddSingleton<ILogger, SerilogWrapper>()
             .BuildServiceProvider();
 
-        dbContext = serviceProvider.GetService<ApplicationDbContext>();
         repositoryFactory = serviceProvider.GetService<IRepositoryFactory>();
+        logger = serviceProvider.GetService<ILogger>();
     }
-    
-    
 }
