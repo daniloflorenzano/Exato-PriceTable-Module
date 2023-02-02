@@ -1,10 +1,12 @@
 ﻿using Application.Abstractions;
 using Application.Handlers;
 using Application.Wrappers;
+using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Entities.Enums;
 using Infraestructure;
 using Infraestructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -12,52 +14,65 @@ namespace Presentation;
 
 public class ExatoPriceTableModule
 {
-    private static readonly ApplicationDbContext _applicationDbContext = null!;
+    //private static readonly ApplicationDbContext _applicationDbContext;
     private readonly ILogger _logger = null!;
-    private readonly RepositoryFactory _repositoryFactory = new (_applicationDbContext);
+    //private readonly RepositoryFactory _repositoryFactory;
+    private string _connectionString;
 
-    public ExatoPriceTableModule()
+    public ExatoPriceTableModule(string connectionString)
     {
+        _connectionString = connectionString;
+    }
+
+    public async Task CreateSchema(string name)
+    {
+        InitiateDependencyContainer(out var dbContext, out var repositoryFactory);
+
+        if (repositoryFactory is null)
+            throw new Exception("deu pau no repositoryFactory");
         
+        var repository = repositoryFactory.Create();
+        repository.CreateSchema(name);
     }
     
     public async Task CreateTable(string name, string description, DiscountType discountType, DateTime? expirationDate)
     {
-        try
-        {
-            InitiateDependencyContainer();
-            
-            Table table = new (name, description, expirationDate, discountType);
-            TableHandler tableHandler = new(_repositoryFactory, _logger);
-
-            await tableHandler.CreateTable(table);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        // try
+        // {
+        //     InitiateDependencyContainer();
+        //     
+        //     Table table = new (name, description, expirationDate, discountType);
+        //     TableHandler tableHandler = new(_repositoryFactory, _logger);
+        //
+        //     await tableHandler.CreateTable(table);
+        // }
+        // catch (Exception e)
+        // {
+        //     Console.WriteLine(e);
+        //     throw;
+        // }
     }
 
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
     {
-        try
-        {
-            ItemHandler itemHandler = new (_repositoryFactory, tableExternalId);
-            TableHandler tableHandler = new(_repositoryFactory, _logger);
-            var table = await tableHandler.GetTableByExternalId(tableExternalId);
-            var tableType = table.Type;
-            var items = await itemHandler.ListItemsInTableInDateRange(initialDate, limitDate);
-            var groupsOfItems = itemHandler.SegregateItems(items);
-            var totalPrice = CalculateTotalPriceByTypeOfTable(groupsOfItems, tableType);
-
-            return totalPrice;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        // try
+        // {
+        //     ItemHandler itemHandler = new (_repositoryFactory, tableExternalId);
+        //     TableHandler tableHandler = new(_repositoryFactory, _logger);
+        //     var table = await tableHandler.GetTableByExternalId(tableExternalId);
+        //     var tableType = table.Type;
+        //     var items = await itemHandler.ListItemsInTableInDateRange(initialDate, limitDate);
+        //     var groupsOfItems = itemHandler.SegregateItems(items);
+        //     var totalPrice = CalculateTotalPriceByTypeOfTable(groupsOfItems, tableType);
+        //
+        //     return totalPrice;
+        // }
+        // catch (Exception e)
+        // {
+        //     Console.WriteLine(e);
+        //     throw;
+        // }
+        throw new NotImplementedException();
     }
 
     private decimal CalculateTotalPriceByTypeOfTable(List<List<Item>> groupsOfItems, DiscountType tableType)
@@ -83,14 +98,16 @@ public class ExatoPriceTableModule
         return totalPrice;
     }
 
-    private void InitiateDependencyContainer()
+    private void InitiateDependencyContainer(out ApplicationDbContext? dbContext, out IRepositoryFactory? repositoryFactory)
     {
-        // TODO: ver como sera feita a injecao do DbContext pelo usuario
-        using IHost host = Host.CreateDefaultBuilder()
-            .ConfigureServices((_, services) => 
-                services
-                    .AddDbContext<ApplicationDbContext>()
-                    .AddTransient<ILogger, SerilogWrapper>())
-                    .Build();
+        var serviceProvider = new ServiceCollection()
+            .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_connectionString))
+            .AddScoped<IRepositoryFactory, RepositoryFactory>()
+            .BuildServiceProvider();
+
+        dbContext = serviceProvider.GetService<ApplicationDbContext>();
+        repositoryFactory = serviceProvider.GetService<IRepositoryFactory>();
     }
+    
+    
 }

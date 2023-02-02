@@ -2,6 +2,7 @@
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Infraestructure.Repositories;
 
@@ -12,6 +13,18 @@ public class PostgreRepository : IRepository
     public PostgreRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public void CreateSchema(string name)
+    {
+        //var sql = $"SELECT schema_name FROM information_schema.schemata WHERE schema_name = '{name}'";
+        //var result = _dbContext.Database.SqlQueryRaw<string>(sql).FirstOrDefault();
+
+        //if (result is  null)
+
+        //var sql = "SELECT * FROM YourTable WHERE Column1 = @0 AND Column2 = @1";
+        var sql = "CREATE SCHEMA " + name;
+        _dbContext.Database.ExecuteSqlRaw(sql);
     }
 
     public async Task CreateTable(Table table)
@@ -26,7 +39,7 @@ public class PostgreRepository : IRepository
             throw new Exception($"Already exists a table named {table.Name} with this same type");
 
         // persiste os dados da tabela em uma tabela "Tables"
-        _dbContext.Tables.Add(table);
+        //_dbContext.Tables.Add(table);
 
         // realmente cria a tabela no banco de dados com o nome passado
         await _dbContext.Database.ExecuteSqlRawAsync(@"CREATE TABLE {0} (
@@ -44,45 +57,47 @@ public class PostgreRepository : IRepository
 
     public Table[] ListTables()
     {
-        var tables = _dbContext.Tables.AsNoTracking().ToArray();
-
-        if (!tables.Any())
-            throw new Exception("There is no created tables");
-
-        return tables;
+        // var tables = _dbContext.Tables.AsNoTracking().ToArray();
+        //
+        // if (!tables.Any())
+        //     throw new Exception("There is no created tables");
+        //
+        // return tables;
+        throw new NotImplementedException();
     }
 
     public async Task<Table> GetTableByExternalId(Guid externalId)
     {
-        var table = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
-
-        if (table is null)
-            throw new Exception($"Table with external id: {externalId} was not found");
-
-        return table;
+        // var table = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
+        //
+        // if (table is null)
+        //     throw new Exception($"Table with external id: {externalId} was not found");
+        //
+        // return table;
+        throw new NotImplementedException();
     }
 
     public async Task UpdateTable(Guid externalId, Table table)
     {
-        var existingTable = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
-
-        if (existingTable is null)
-            throw new Exception($"Table with external id: {externalId} was not found");
-        
-        table.ExternalId = externalId;
-        _dbContext.Tables.Update(table);
-
-        await _dbContext.SaveChangesAsync();
+        // var existingTable = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
+        //
+        // if (existingTable is null)
+        //     throw new Exception($"Table with external id: {externalId} was not found");
+        //
+        // table.ExternalId = externalId;
+        // _dbContext.Tables.Update(table);
+        //
+        // await _dbContext.SaveChangesAsync();
     }
 
     public async Task DeleteTable(Guid externalId)
     {
-        var table = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
-
-        if (table is null)
-            throw new Exception($"Table with external id: {externalId} was not found");
-
-        _dbContext.Remove(table);
+        // var table = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
+        //
+        // if (table is null)
+        //     throw new Exception($"Table with external id: {externalId} was not found");
+        //
+        // _dbContext.Remove(table);
     }
 
     public async Task CreateItem(Item item, Guid tableExternalId)

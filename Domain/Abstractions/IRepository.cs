@@ -4,6 +4,7 @@ namespace Domain.Abstractions;
 
 public interface IRepository
 {
+    public void CreateSchema(string name);
     public Task CreateTable(Table table);
     public Table[] ListTables();
     public Task<Table> GetTableByExternalId(Guid externalId);

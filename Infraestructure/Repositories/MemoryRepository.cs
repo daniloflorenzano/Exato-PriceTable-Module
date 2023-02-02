@@ -6,6 +6,11 @@ namespace Infraestructure.Repositories;
 
 public class MemoryRepository : IRepository
 {
+    public void CreateSchema(string name)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task CreateTable(Table table)
     {
         throw new NotImplementedException();
