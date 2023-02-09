@@ -25,7 +25,7 @@ public class TableHandlerTests
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory, _logger);
+        var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         tableHandler.ListTables();
@@ -42,7 +42,7 @@ public class TableHandlerTests
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory, _logger);
+        var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         await tableHandler.GetTableByExternalId(table.ExternalId);
@@ -60,7 +60,7 @@ public class TableHandlerTests
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
         A.CallTo(() => repository.GetTableByExternalId(externalId)).Throws<Exception>();
-        var tableHandler = new TableHandler(_repositoryFactory, _logger);
+        var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
         
         // Act
         Func<Task> func = async () => await tableHandler.GetTableByExternalId(externalId);
@@ -77,13 +77,13 @@ public class TableHandlerTests
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory, _logger);
+        var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         await tableHandler.CreateTable(table);
 
         // Assert
-        A.CallTo(() => repository.CreateTable(table))
+        A.CallTo(() => repository.CreateTable(table, ""))
             .MustHaveHappened(1, Times.Exactly);
     }
 
@@ -94,7 +94,7 @@ public class TableHandlerTests
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory, _logger);
+        var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         await tableHandler.UpdateTable(table.ExternalId, table);
@@ -110,7 +110,7 @@ public class TableHandlerTests
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
         A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
-        var tableHandler = new TableHandler(_repositoryFactory, _logger);
+        var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         await tableHandler.DeleteTable(table.ExternalId);

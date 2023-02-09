@@ -16,13 +16,15 @@ namespace Presentation;
 public class ExatoPriceTableModule
 {
     private string _connectionString;
+    private string _schema;
 
-    public ExatoPriceTableModule(string connectionString)
+    public ExatoPriceTableModule(string connectionString, string schema)
     {
         _connectionString = connectionString;
+        _schema = schema;
     }
 
-    public async Task CreateSchema(string name)
+    public async Task CreateTable(string name, string description, DiscountType discountType, DateTime? expirationDate)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
@@ -31,9 +33,36 @@ public class ExatoPriceTableModule
         
         try
         {
+            await CreateSchema();
+            await CreateTablesTable();
+            
+            var table = new Table(name, description, expirationDate, discountType);
+            var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+            await tableHandler.CreateTable(table);
+            logger.Information($"Table '{table.Name}' created.");
+        }
+        catch (PostgresException e) when(e.Message.Contains("already exists"))
+        {
+            logger.Warning($"{e.Message}, continuing...");
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
+    }
 
+    private async Task CreateSchema()
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+        
+        try
+        {
             var repository = repositoryFactory.Create();
-            await repository.CreateSchema(name);
+            await repository.CreateSchema(_schema);
         }
         catch (PostgresException e) when(e.Message.Contains("already exists"))
         {
@@ -46,22 +75,29 @@ public class ExatoPriceTableModule
         }
     }
     
-    public async Task CreateTable(string name, string description, DiscountType discountType, DateTime? expirationDate)
+    private async Task CreateTablesTable()
     {
-        // try
-        // {
-        //     InitiateDependencyContainer();
-        //     
-        //     Table table = new (name, description, expirationDate, discountType);
-        //     TableHandler tableHandler = new(_repositoryFactory, _logger);
-        //
-        //     await tableHandler.CreateTable(table);
-        // }
-        // catch (Exception e)
-        // {
-        //     Console.WriteLine(e);
-        //     throw;
-        // }
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+        
+        try
+        {
+            await CreateSchema();
+            
+            var repository = repositoryFactory.Create();
+            await repository.CreateTablesTable(_schema);
+        }
+        catch (PostgresException e) when(e.Message.Contains("already exists"))
+        {
+            logger.Warning($"{e.Message}, continuing...");
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
     }
 
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)

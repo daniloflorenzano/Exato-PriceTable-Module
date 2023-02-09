@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using System.Globalization;
+using Domain;
 using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -20,32 +21,54 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync("CREATE SCHEMA " + name);
     }
 
-    public async Task CreateTable(Table table)
+    public async Task CreateTablesTable(string schema)
     {
-        var existingTableWithSameName = AlreadyExistsTableWithSameNameButDifferentType(table);
-        var existingIdenticalTable = AlreadyExistsTableWithSameNameAndType(table);
-
-        if (existingTableWithSameName is true)
-            throw new Exception($"Already exists a table named {table.Name}, but with a different type");
-
-        if (existingIdenticalTable is true)
-            throw new Exception($"Already exists a table named {table.Name} with this same type");
-
-        // persiste os dados da tabela em uma tabela "Tables"
-        //_dbContext.Tables.Add(table);
-
-        // realmente cria a tabela no banco de dados com o nome passado
-        await _dbContext.Database.ExecuteSqlRawAsync(@"CREATE TABLE {0} (
-            Id SERIAL PRIMARY KEY,
-            ExternalId UNIQUEIDENTIFIER,
-            Description NVARCHAR(255),
-            Type INT,
-            Price DOUBLE,
-            InitialAmount INT,
-            LimitAmount INT
-        )", table.Name);
+        var query = $"create table {schema}.Tables (" +
+            "Id serial primary key," +
+            "External_Id uuid," +
+            "Name text," +
+            "Description text," +
+            "Type int," +
+            "Active bool," +
+            "Expiration_Date timestamp," +
+            "Creation_Date timestamp" +
+            ");";
         
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.Database.ExecuteSqlRawAsync(query);
+    }
+    
+    public async Task CreateTable(Table table, string schema)
+    {
+        var insertQuery = $"insert into {schema}.tables(" +
+            "external_id," +
+            "name," +
+            "description," +
+            "type," +
+            "active," +
+            "expiration_date," +
+            "creation_date) " +
+            "values (" +
+            $"'{table.ExternalId}'," +
+            $"'{table.Name}'," +
+            $"'{table.Description}'," +
+            $"{(int)table.Type}," +
+            $"{table.Active}," +
+            $"null," +
+            $"'{table.CreationDate}'" +
+            ")";
+
+        await _dbContext.Database.ExecuteSqlRawAsync(insertQuery);
+        
+        var createQuery = $"create table {schema}.{table.Name}(" +
+            "Id serial primary key," +
+            $"Table_Id integer references {schema}.Tables(id)," +
+            "External_Id uuid," +
+            "Description text," +
+            "Price json," +
+            "Purchase_Date timestamp" +
+            ")";
+        
+        await _dbContext.Database.ExecuteSqlRawAsync(createQuery);
     }
 
     public Table[] ListTables()
