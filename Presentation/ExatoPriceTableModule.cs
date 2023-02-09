@@ -41,9 +41,8 @@ public class ExatoPriceTableModule
             await tableHandler.CreateTable(table);
             logger.Information($"Table '{table.Name}' created.");
         }
-        catch (PostgresException e) when (e.Message.Contains(name.ToLower()) && e.Message.Contains("already exists"))
+        catch (PostgresException e) when (e.Message.Contains("violates unique constraint"))
         {
-            logger.Error(e.Message);
             throw new Exception($"Table '{name}' already exists");
         }
         catch (PostgresException e) when(e.Message.Contains("already exists"))

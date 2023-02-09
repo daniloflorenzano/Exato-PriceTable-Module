@@ -26,7 +26,7 @@ public class PostgreRepository : IRepository
         var query = $"create table {schema}.Tables (" +
             "Id serial primary key," +
             "External_Id uuid," +
-            "Name text," +
+            "Name text UNIQUE," +
             "Description text," +
             "Type int," +
             "Active bool," +
@@ -39,6 +39,8 @@ public class PostgreRepository : IRepository
     
     public async Task CreateTable(Table table, string schema)
     {
+        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDate}'" : "null"; 
+        
         var insertQuery = $"insert into {schema}.tables(" +
             "external_id," +
             "name," +
@@ -53,7 +55,7 @@ public class PostgreRepository : IRepository
             $"'{table.Description}'," +
             $"{(int)table.Type}," +
             $"{table.Active}," +
-            $"null," +
+            $"{tableExpirationDate}," +
             $"'{table.CreationDate}'" +
             ")";
 
