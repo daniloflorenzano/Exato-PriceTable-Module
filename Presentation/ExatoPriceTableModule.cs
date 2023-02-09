@@ -30,16 +30,21 @@ public class ExatoPriceTableModule
         
         if (repositoryFactory is null || logger is null)
             throw new Exception("There is a problem with the dependency injection container");
-        
+
         try
         {
             await CreateSchema();
             await CreateTablesTable();
-            
+
             var table = new Table(name, description, expirationDate, discountType);
             var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
             await tableHandler.CreateTable(table);
             logger.Information($"Table '{table.Name}' created.");
+        }
+        catch (PostgresException e) when (e.Message.Contains(name.ToLower()) && e.Message.Contains("already exists"))
+        {
+            logger.Error(e.Message);
+            throw new Exception($"Table '{name}' already exists");
         }
         catch (PostgresException e) when(e.Message.Contains("already exists"))
         {
