@@ -104,6 +104,26 @@ public class ExatoPriceTableModule
         }
     }
 
+    public List<Table> ListTables()
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+
+        try
+        {
+            var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+            var tables = tableHandler.ListTables();
+            return tables;
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
+    }
+
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
     {
         // try

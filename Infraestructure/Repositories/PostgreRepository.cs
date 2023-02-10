@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 using Domain;
 using Domain.Abstractions;
 using Domain.Entities;
@@ -35,6 +36,9 @@ public class PostgreRepository : IRepository
             ");";
         
         await _dbContext.Database.ExecuteSqlRawAsync(query);
+        
+        await _dbContext.Database.ExecuteSqlRawAsync($@"CREATE VIEW registered_tables AS
+                SELECT * FROM {schema}.tables");
     }
     
     public async Task CreateTable(Table table, string schema)
@@ -73,15 +77,9 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync(createQuery);
     }
 
-    public Table[] ListTables()
+    public List<Table> ListTables(string schema)
     {
-        // var tables = _dbContext.Tables.AsNoTracking().ToArray();
-        //
-        // if (!tables.Any())
-        //     throw new Exception("There is no created tables");
-        //
-        // return tables;
-        throw new NotImplementedException();
+        return _dbContext.Tables.ToList();
     }
 
     public async Task<Table> GetTableByExternalId(Guid externalId)
@@ -151,28 +149,28 @@ public class PostgreRepository : IRepository
         throw new NotImplementedException();
     }
     
-    private bool AlreadyExistsTableWithSameNameButDifferentType(Table table)
-    {
-        var existingTables = ListTables();
-        foreach (var t in existingTables)
-        {
-            if (t.Name == table.Name && t.Type != table.Type)
-                return true;
-        }
+    // private bool AlreadyExistsTableWithSameNameButDifferentType(Table table)
+    // {
+    //     var existingTables = ListTables();
+    //     foreach (var t in existingTables)
+    //     {
+    //         if (t.Name == table.Name && t.Type != table.Type)
+    //             return true;
+    //     }
+    //
+    //     return false;
+    // }
 
-        return false;
-    }
-
-    private bool AlreadyExistsTableWithSameNameAndType(Table table)
-    {
-        var existingTables = ListTables();
-
-        foreach (Table t in existingTables)
-        {
-            if (t.Name == table.Name && t.Type == table.Type)
-                return true;
-        }
-
-        return false;
-    }
+    // private bool AlreadyExistsTableWithSameNameAndType(Table table)
+    // {
+    //     var existingTables = ListTables();
+    //
+    //     foreach (Table t in existingTables)
+    //     {
+    //         if (t.Name == table.Name && t.Type == table.Type)
+    //             return true;
+    //     }
+    //
+    //     return false;
+    // }
 }

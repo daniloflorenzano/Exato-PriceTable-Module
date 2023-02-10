@@ -17,23 +17,18 @@ public class TableHandler
         _schema = schema;
     }
 
-    public Table[] ListTables()
+    public List<Table> ListTables()
     {
         try
         {
-            _logger.Information("TableHandler.ListTables executing...");
-            
             var repository = _repositoryFactory.Create();
-            _logger.Information("TableHandler.ListTables repository created...");
-
-            var result = repository.ListTables();
-            _logger.Information($"TableHandler.ListTables: {result.Length} tables returned");
+            var result = repository.ListTables(_schema);
             
             return result;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Error(e.Message);
             throw;
         }
     }

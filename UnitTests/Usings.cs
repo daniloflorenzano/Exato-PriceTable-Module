@@ -18,4 +18,10 @@ public class Usings
     {
         await _exatoPriceTableModule.CreateTable("TabelaDeTeste2", "descricao", DiscountType.FixedPrice, null);
     }
+    
+    [Test]
+    public void ListTables_Should_Work()
+    {
+        var tables = _exatoPriceTableModule.ListTables();
+    }
 }

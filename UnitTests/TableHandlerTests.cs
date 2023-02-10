@@ -31,7 +31,7 @@ public class TableHandlerTests
         tableHandler.ListTables();
 
         // Assert
-        A.CallTo(() => repository.ListTables())
+        A.CallTo(() => repository.ListTables(""))
             .MustHaveHappened(1, Times.Exactly);
     }
     
