@@ -7,8 +7,8 @@ public interface IRepository
     public Task CreateSchema(string name);
     public Task CreateTablesTable(string schema);
     public Task CreateTable(Table table, string schema);
-    public List<Table> ListTables(string schema);
-    public Task<Table> GetTableByExternalId(Guid externalId);
+    public Task<List<Table?>> ListTables(string schema);
+    public Task<Table?> GetTableByExternalId(Guid externalId);
     public Task UpdateTable(Guid externalId, Table table);
     public Task DeleteTable(Guid externalId);
 

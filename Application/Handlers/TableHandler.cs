@@ -17,12 +17,12 @@ public class TableHandler
         _schema = schema;
     }
 
-    public List<Table> ListTables()
+    public async Task<List<Table?>> ListTables()
     {
         try
         {
             var repository = _repositoryFactory.Create();
-            var result = repository.ListTables(_schema);
+            var result = await repository.ListTables(_schema);
             
             return result;
         }
@@ -33,7 +33,7 @@ public class TableHandler
         }
     }
 
-    public async Task<Table> GetTableByExternalId(Guid externalId)
+    public async Task<Table?> GetTableByExternalId(Guid externalId)
     {
         try
         {

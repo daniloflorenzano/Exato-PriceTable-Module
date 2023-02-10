@@ -5,7 +5,7 @@ namespace Infraestructure;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<Table> Tables { get; set; }
+    public DbSet<Table?> Tables { get; set; }
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

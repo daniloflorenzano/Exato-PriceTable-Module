@@ -77,20 +77,14 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync(createQuery);
     }
 
-    public List<Table> ListTables(string schema)
+    public async Task<List<Table?>> ListTables(string schema)
     {
-        return _dbContext.Tables.ToList();
+        return await _dbContext.Tables.ToListAsync();
     }
 
-    public async Task<Table> GetTableByExternalId(Guid externalId)
+    public async Task<Table?> GetTableByExternalId(Guid externalId)
     {
-        // var table = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
-        //
-        // if (table is null)
-        //     throw new Exception($"Table with external id: {externalId} was not found");
-        //
-        // return table;
-        throw new NotImplementedException();
+        return await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == externalId);
     }
 
     public async Task UpdateTable(Guid externalId, Table table)

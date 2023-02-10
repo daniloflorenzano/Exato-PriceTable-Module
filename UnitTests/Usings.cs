@@ -1,4 +1,5 @@
 ﻿global using NUnit.Framework;
+using Domain.Entities;
 using Domain.Entities.Enums;
 using Presentation;
 
@@ -20,8 +21,15 @@ public class Usings
     }
     
     [Test]
-    public void ListTables_Should_Work()
+    public async Task ListTables_Should_Work()
     {
-        var tables = _exatoPriceTableModule.ListTables();
+        var tables = await _exatoPriceTableModule.ListTables();
+    }
+    
+    [Test]
+    public async Task GetTableById_Should_Work()
+    {
+        var externalId = Guid.Parse("4bdb1f65-f2b6-4437-bbcd-ef743f9eca5b");
+        var table = await _exatoPriceTableModule.GetTableByExternalId(externalId);
     }
 }

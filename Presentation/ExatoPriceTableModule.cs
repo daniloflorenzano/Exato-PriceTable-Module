@@ -8,7 +8,6 @@ using Infraestructure;
 using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Npgsql;
 
 namespace Presentation;
@@ -104,7 +103,7 @@ public class ExatoPriceTableModule
         }
     }
 
-    public List<Table> ListTables()
+    public async Task<List<Table>> ListTables()
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
@@ -114,8 +113,9 @@ public class ExatoPriceTableModule
         try
         {
             var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
-            var tables = tableHandler.ListTables();
-            return tables;
+            var tables = await tableHandler.ListTables();
+
+            return tables!;
         }
         catch (Exception e)
         {
@@ -124,6 +124,30 @@ public class ExatoPriceTableModule
         }
     }
 
+    public async Task<Table?> GetTableByExternalId(Guid externalId)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+
+        try
+        {
+            var repository = repositoryFactory.Create();
+            var table = await repository.GetTableByExternalId(externalId);
+            
+            if (table is null)
+                throw new Exception("Table not found");
+            
+            return table;
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
+    }
+    
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
     {
         // try
