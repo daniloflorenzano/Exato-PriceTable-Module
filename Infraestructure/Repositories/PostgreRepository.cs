@@ -102,24 +102,23 @@ public class PostgreRepository : IRepository
 
     public async Task DeleteTable(Guid externalId)
     {
-        // var table = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
-        //
-        // if (table is null)
-        //     throw new Exception($"Table with external id: {externalId} was not found");
-        //
-        // _dbContext.Remove(table);
+        var schema = "descontos";
+        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == externalId);
+
+        if (table is null)
+            throw new Exception("Table not found");
+        
+        var tableName = table.Name;
+        
+        var dropQuery = $"drop table {schema}.{tableName}";
+        var deleteQuery = $"delete from {schema}.Tables where external_id = '{externalId}'";
+
+        await _dbContext.Database.ExecuteSqlRawAsync(dropQuery);
+        await _dbContext.Database.ExecuteSqlRawAsync(deleteQuery);
     }
 
     public async Task CreateItem(Item item, Guid tableExternalId)
     {
-        // var table = await GetTableByExternalId(tableExternalId);
-        // var tableName = table.Name;
-        //
-        // await _dbContext.Database
-        //     .ExecuteSqlRawAsync(@"INSERT INTO {0} (ExternalId, Description, Type, Price, InitialAmount, LimitAmount)
-        //     VALUES ({1}, {2}, {3}, {4}, {5}, {6})", 
-        //     tableName, item.ExternalId, item.Description, item.Type, item.Price, item.InitialAmount, item.LimitAmount);
-
         throw new NotImplementedException();
     }
 
@@ -142,29 +141,4 @@ public class PostgreRepository : IRepository
     {
         throw new NotImplementedException();
     }
-    
-    // private bool AlreadyExistsTableWithSameNameButDifferentType(Table table)
-    // {
-    //     var existingTables = ListTables();
-    //     foreach (var t in existingTables)
-    //     {
-    //         if (t.Name == table.Name && t.Type != table.Type)
-    //             return true;
-    //     }
-    //
-    //     return false;
-    // }
-
-    // private bool AlreadyExistsTableWithSameNameAndType(Table table)
-    // {
-    //     var existingTables = ListTables();
-    //
-    //     foreach (Table t in existingTables)
-    //     {
-    //         if (t.Name == table.Name && t.Type == table.Type)
-    //             return true;
-    //     }
-    //
-    //     return false;
-    // }
 }

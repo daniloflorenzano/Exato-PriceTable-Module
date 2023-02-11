@@ -32,4 +32,10 @@ public class Usings
         var externalId = Guid.Parse("4bdb1f65-f2b6-4437-bbcd-ef743f9eca5b");
         var table = await _exatoPriceTableModule.GetTableByExternalId(externalId);
     }
+
+    [Test] public async Task DeleteTable_Should_Work()
+    {
+        var externalId = Guid.Parse("4bdb1f65-f2b6-4437-bbcd-ef743f9eca5b");
+        await _exatoPriceTableModule.DeleteTable(externalId);
+    }
 }
