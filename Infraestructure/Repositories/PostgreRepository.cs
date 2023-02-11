@@ -1,30 +1,28 @@
-﻿using System.Globalization;
-using System.Text.Json;
-using Domain;
-using Domain.Abstractions;
+﻿using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Infraestructure.Repositories;
 
 public class PostgreRepository : IRepository
 {
     private readonly ApplicationDbContext _dbContext;
+    private string _schema;
 
-    public PostgreRepository(ApplicationDbContext dbContext)
+    public PostgreRepository(ApplicationDbContext dbContext, string schema)
     {
         _dbContext = dbContext;
+        _schema = schema;
     }
 
-    public async Task CreateSchema(string name)
+    public async Task CreateSchema()
     {
-        await _dbContext.Database.ExecuteSqlRawAsync("CREATE SCHEMA " + name);
+        await _dbContext.Database.ExecuteSqlRawAsync("CREATE SCHEMA " + _schema);
     }
 
-    public async Task CreateTablesTable(string schema)
+    public async Task CreateTablesTable()
     {
-        var query = $"create table {schema}.Tables (" +
+        var query = $"create table {_schema}.Tables (" +
             "Id serial primary key," +
             "External_Id uuid," +
             "Name text UNIQUE," +
@@ -38,14 +36,14 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync(query);
         
         await _dbContext.Database.ExecuteSqlRawAsync($@"CREATE VIEW registered_tables AS
-                SELECT * FROM {schema}.tables");
+                SELECT * FROM {_schema}.tables");
     }
     
-    public async Task CreateTable(Table table, string schema)
+    public async Task CreateTable(Table table)
     {
         var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDate}'" : "null"; 
         
-        var insertQuery = $"insert into {schema}.tables(" +
+        var insertQuery = $"insert into {_schema}.tables(" +
             "external_id," +
             "name," +
             "description," +
@@ -65,9 +63,9 @@ public class PostgreRepository : IRepository
 
         await _dbContext.Database.ExecuteSqlRawAsync(insertQuery);
         
-        var createQuery = $"create table {schema}.{table.Name}(" +
+        var createQuery = $"create table {_schema}.{table.Name}(" +
             "Id serial primary key," +
-            $"Table_Id integer references {schema}.Tables(id)," +
+            $"Table_Id integer references {_schema}.Tables(id)," +
             "External_Id uuid," +
             "Description text," +
             "Price json," +
@@ -77,7 +75,7 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync(createQuery);
     }
 
-    public async Task<List<Table?>> ListTables(string schema)
+    public async Task<List<Table?>> ListTables()
     {
         return await _dbContext.Tables.ToListAsync();
     }
@@ -102,7 +100,6 @@ public class PostgreRepository : IRepository
 
     public async Task DeleteTable(Guid externalId)
     {
-        var schema = "descontos";
         var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == externalId);
 
         if (table is null)
@@ -110,8 +107,8 @@ public class PostgreRepository : IRepository
         
         var tableName = table.Name;
         
-        var dropQuery = $"drop table {schema}.{tableName}";
-        var deleteQuery = $"delete from {schema}.Tables where external_id = '{externalId}'";
+        var dropQuery = $"drop table {_schema}.{tableName}";
+        var deleteQuery = $"delete from {_schema}.Tables where external_id = '{externalId}'";
 
         await _dbContext.Database.ExecuteSqlRawAsync(dropQuery);
         await _dbContext.Database.ExecuteSqlRawAsync(deleteQuery);

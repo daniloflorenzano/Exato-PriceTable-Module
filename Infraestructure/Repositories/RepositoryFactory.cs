@@ -11,8 +11,8 @@ public class RepositoryFactory : IRepositoryFactory
         _dbContext = dbContext;
     }
 
-    public IRepository Create()
+    public IRepository Create(string schema)
     {
-        return new PostgreRepository(_dbContext);
+        return new PostgreRepository(_dbContext, schema);
     }
 }

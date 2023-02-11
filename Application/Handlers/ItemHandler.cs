@@ -7,18 +7,20 @@ public class ItemHandler
 {
     private readonly IRepositoryFactory _repositoryFactory;
     private readonly Guid _tableExternalId;
+    private string _schema;
 
-    public ItemHandler(IRepositoryFactory repositoryFactory, Guid tableExternalId)
+    public ItemHandler(IRepositoryFactory repositoryFactory, Guid tableExternalId, string schema)
     {
         _repositoryFactory = repositoryFactory;
         _tableExternalId = tableExternalId;
+        _schema = schema;
     }
 
     public async Task<Item[]> ListAllItemsInTable()
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
             var result = await repository.ListItems(_tableExternalId);
 
             return result;
@@ -34,7 +36,7 @@ public class ItemHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
             var result = await repository.GetItemByExternalId(itemExternalId, _tableExternalId);
 
             return result;
@@ -50,7 +52,7 @@ public class ItemHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
             await repository.CreateItem(item, _tableExternalId);
         }
         catch (Exception e)
@@ -64,7 +66,7 @@ public class ItemHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
 
             await repository.UpdateItem(itemExtenalId, item, _tableExternalId);
         }

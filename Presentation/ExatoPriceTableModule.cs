@@ -64,8 +64,8 @@ public class ExatoPriceTableModule
         
         try
         {
-            var repository = repositoryFactory.Create();
-            await repository.CreateSchema(_schema);
+            var repository = repositoryFactory.Create(_schema);
+            await repository.CreateSchema();
         }
         catch (PostgresException e) when(e.Message.Contains("already exists"))
         {
@@ -89,8 +89,8 @@ public class ExatoPriceTableModule
         {
             await CreateSchema();
             
-            var repository = repositoryFactory.Create();
-            await repository.CreateTablesTable(_schema);
+            var repository = repositoryFactory.Create(_schema);
+            await repository.CreateTablesTable();
         }
         catch (PostgresException e) when(e.Message.Contains("already exists"))
         {
@@ -133,7 +133,7 @@ public class ExatoPriceTableModule
 
         try
         {
-            var repository = repositoryFactory.Create();
+            var repository = repositoryFactory.Create(_schema);
             var table = await repository.GetTableByExternalId(externalId);
             
             if (table is null)
@@ -157,7 +157,7 @@ public class ExatoPriceTableModule
 
         try
         {
-            var repository = repositoryFactory.Create();
+            var repository = repositoryFactory.Create(_schema);
             await repository.DeleteTable(externalId);
         }
         catch (Exception e)

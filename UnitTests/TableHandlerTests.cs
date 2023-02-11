@@ -24,14 +24,14 @@ public class TableHandlerTests
         // Arrange
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
+        A.CallTo(() => _repositoryFactory.Create("")).Returns(repository);
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         tableHandler.ListTables();
 
         // Assert
-        A.CallTo(() => repository.ListTables(""))
+        A.CallTo(() => repository.ListTables())
             .MustHaveHappened(1, Times.Exactly);
     }
     
@@ -41,7 +41,7 @@ public class TableHandlerTests
         // Arrange
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
+        A.CallTo(() => _repositoryFactory.Create("")).Returns(repository);
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
@@ -58,7 +58,7 @@ public class TableHandlerTests
         // Arrange
         var externalId = Guid.NewGuid();
         var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
+        A.CallTo(() => _repositoryFactory.Create("")).Returns(repository);
         A.CallTo(() => repository.GetTableByExternalId(externalId)).Throws<Exception>();
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
         
@@ -76,14 +76,14 @@ public class TableHandlerTests
         // Arrange
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
+        A.CallTo(() => _repositoryFactory.Create("")).Returns(repository);
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
         await tableHandler.CreateTable(table);
 
         // Assert
-        A.CallTo(() => repository.CreateTable(table, ""))
+        A.CallTo(() => repository.CreateTable(table))
             .MustHaveHappened(1, Times.Exactly);
     }
 
@@ -93,7 +93,7 @@ public class TableHandlerTests
         // Arrange
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
+        A.CallTo(() => _repositoryFactory.Create("")).Returns(repository);
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
@@ -109,7 +109,7 @@ public class TableHandlerTests
         // Arrange
         var table = A.Fake<Table>();
         var repository = A.Fake<IRepository>();
-        A.CallTo(() => _repositoryFactory.Create()).Returns(repository);
+        A.CallTo(() => _repositoryFactory.Create("")).Returns(repository);
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act

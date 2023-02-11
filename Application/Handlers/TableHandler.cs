@@ -21,8 +21,8 @@ public class TableHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
-            var result = await repository.ListTables(_schema);
+            var repository = _repositoryFactory.Create(_schema);
+            var result = await repository.ListTables();
             
             return result;
         }
@@ -37,7 +37,7 @@ public class TableHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
             var result = await repository.GetTableByExternalId(externalId);
 
             return result;
@@ -53,8 +53,8 @@ public class TableHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
-            await repository.CreateTable(table, _schema);
+            var repository = _repositoryFactory.Create(_schema);
+            await repository.CreateTable(table);
         }
         catch (Exception e)
         {
@@ -67,7 +67,7 @@ public class TableHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
             await repository.UpdateTable(tableExternalId, table);
         }
         catch (Exception e)
@@ -81,7 +81,7 @@ public class TableHandler
     {
         try
         {
-            var repository = _repositoryFactory.Create();
+            var repository = _repositoryFactory.Create(_schema);
             await repository.DeleteTable(externalId);
         }
         catch (Exception e)

@@ -2,5 +2,5 @@
 
 public interface IRepositoryFactory
 {
-    public IRepository Create();
+    public IRepository Create(string schema);
 }

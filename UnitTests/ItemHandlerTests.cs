@@ -21,7 +21,7 @@ public class ItemHandlerTests
     public void SegregateItems_Should_Return_Three_Lists()
     {
         // Arrange
-        ItemHandler itemHandler = new(_repositoryFactory, _tableExternalGuid);
+        ItemHandler itemHandler = new(_repositoryFactory, _tableExternalGuid, "");
         var listOfItems = new List<Item>
         {
             new Item("A", 10.0m),
