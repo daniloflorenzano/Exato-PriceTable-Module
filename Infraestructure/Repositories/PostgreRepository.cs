@@ -41,25 +41,25 @@ public class PostgreRepository : IRepository
     
     public async Task CreateTable(Table table)
     {
-        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDate}'" : "null"; 
+        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDateToString()}'" : "null";
         
         var insertQuery = $"insert into {_schema}.tables(" +
-            "external_id," +
-            "name," +
-            "description," +
-            "type," +
-            "active," +
-            "expiration_date," +
-            "creation_date) " +
-            "values (" +
-            $"'{table.ExternalId}'," +
-            $"'{table.Name}'," +
-            $"'{table.Description}'," +
-            $"{(int)table.Type}," +
-            $"{table.Active}," +
-            $"{tableExpirationDate}," +
-            $"'{table.CreationDate}'" +
-            ")";
+                          "external_id," +
+                          "name," +
+                          "description," +
+                          "type," +
+                          "active," +
+                          "expiration_date," +
+                          "creation_date) " +
+                          "values (" +
+                          $"'{table.ExternalId}'," +
+                          $"'{table.Name}'," +
+                          $"'{table.Description}'," +
+                          $"{(int)table.Type}," +
+                          $"{table.Active}," +
+                          $"{tableExpirationDate}," +
+                          $"'{table.CreationDateToString()}'" +
+                          ")";
 
         await _dbContext.Database.ExecuteSqlRawAsync(insertQuery);
         
@@ -87,15 +87,22 @@ public class PostgreRepository : IRepository
 
     public async Task UpdateTable(Guid externalId, Table table)
     {
-        // var existingTable = await _dbContext.Tables.FirstOrDefaultAsync(t => t.ExternalId == externalId);
-        //
-        // if (existingTable is null)
-        //     throw new Exception($"Table with external id: {externalId} was not found");
-        //
-        // table.ExternalId = externalId;
-        // _dbContext.Tables.Update(table);
-        //
-        // await _dbContext.SaveChangesAsync();
+        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDateToString()}'" : "null";
+        var existingTable = await GetTableByExternalId(externalId);
+
+        var updateQuery = $"update {_schema}.tables set " +
+          $"name = '{table.Name}', " +
+          $"description = '{table.Description}', " +
+          $"active = {table.Active}, " +
+          $"expiration_date = {tableExpirationDate} " +
+          $"where external_id = '{externalId}'";
+
+        await _dbContext.Database.ExecuteSqlRawAsync(updateQuery);
+
+        var oldName = existingTable!.Name;
+        var renameQuery = $"alter table {_schema}.{oldName} rename to {table.Name};";
+
+        await _dbContext.Database.ExecuteSqlRawAsync(renameQuery);
     }
 
     public async Task DeleteTable(Guid externalId)

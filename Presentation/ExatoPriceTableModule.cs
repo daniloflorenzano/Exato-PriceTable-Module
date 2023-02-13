@@ -14,8 +14,8 @@ namespace Presentation;
 
 public class ExatoPriceTableModule
 {
-    private string _connectionString;
-    private string _schema;
+    private readonly string _connectionString;
+    private readonly string _schema;
 
     public ExatoPriceTableModule(string connectionString, string schema)
     {
@@ -38,7 +38,7 @@ public class ExatoPriceTableModule
             var table = new Table(name, description, expirationDate, discountType);
             var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
             await tableHandler.CreateTable(table);
-            logger.Information($"Table '{table.Name}' created.");
+            logger.Information($"Created: [{table}].");
         }
         catch (PostgresException e) when (e.Message.Contains("violates unique constraint"))
         {
@@ -114,6 +114,7 @@ public class ExatoPriceTableModule
         {
             var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
             var tables = await tableHandler.ListTables();
+            logger.Information($"Found {tables.Count} tables");
 
             return tables!;
         }
@@ -139,7 +140,28 @@ public class ExatoPriceTableModule
             if (table is null)
                 throw new Exception("Table not found");
             
+            logger.Information($"Table founded: [{table}].");
             return table;
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
+    }
+
+    public async Task UpdateTable(Guid externalId, Table table)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+
+        try
+        {
+            var tablheHandler = new TableHandler(repositoryFactory, logger, _schema);
+            await tablheHandler.UpdateTable(externalId, table);
+            logger.Information($"Table updated: {table}");
         }
         catch (Exception e)
         {
@@ -159,6 +181,7 @@ public class ExatoPriceTableModule
         {
             var repository = repositoryFactory.Create(_schema);
             await repository.DeleteTable(externalId);
+            logger.Information("Table deleted");
         }
         catch (Exception e)
         {

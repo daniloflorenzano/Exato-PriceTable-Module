@@ -68,6 +68,14 @@ public class TableHandler
         try
         {
             var repository = _repositoryFactory.Create(_schema);
+
+            var existingTable = await repository.GetTableByExternalId(tableExternalId);
+            if (existingTable is null)
+                throw new Exception("Table not found");
+
+            if (existingTable.Type != table.Type)
+                throw new Exception("Changing the type of the table is prohibited and may cause system issues.");
+            
             await repository.UpdateTable(tableExternalId, table);
         }
         catch (Exception e)
