@@ -23,7 +23,7 @@ namespace Domain.Entities
         /// <param name="active">Ativa: True (padrão), Inativa: False</param>
         public Table(string name, string? description, DateTime? expirationDate, DiscountType type, bool active = true)
         {
-            Name = name;
+            Name = FormatNameForSqlQuery(name);
             Description = description;
             ExpirationDate = expirationDate;
             Type = type;
@@ -34,6 +34,32 @@ namespace Domain.Entities
         {
             Name = name;
             Type = type;
+        }
+
+        private string FormatNameForSqlQuery(string name)
+        {
+            return name.ToLower().Trim().Replace(" ", "_");
+        }
+        
+        public string? ExpirationDateToString()
+        {
+            if (ExpirationDate is null)
+                return null;
+            
+            return ExpirationDate.Value.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        public string CreationDateToString()
+        {
+            return CreationDate.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        public override string ToString()
+        {
+            var expirationDate = ExpirationDate.HasValue ? ExpirationDateToString() : "null";
+            
+            return $"Name: {Name}, Description: {Description}, Type: {Type}, Active: {Active}," +
+                   $" ExpirationDate: {expirationDate}, CreationDate: {CreationDateToString()}";
         }
     }
 }
