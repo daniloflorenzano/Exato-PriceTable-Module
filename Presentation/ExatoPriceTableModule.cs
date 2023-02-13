@@ -134,8 +134,8 @@ public class ExatoPriceTableModule
 
         try
         {
-            var repository = repositoryFactory.Create(_schema);
-            var table = await repository.GetTableByExternalId(externalId);
+            var tableHhandler = new TableHandler(repositoryFactory, logger, _schema);
+            var table = await tableHhandler.GetTableByExternalId(externalId);
             
             if (table is null)
                 throw new Exception("Table not found");
