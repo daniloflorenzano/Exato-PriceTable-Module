@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Enums;
+﻿using System.Text;
+using Domain.Entities.Enums;
 using Domain.Primitives;
 using Domain.ValueObjects;
 
@@ -47,6 +48,41 @@ namespace Domain.Entities
                 PriceSequence = priceSequence,
                 AmountLimitsToApplyDiscount = amountLimitsToApplyDiscount
             };
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append("Description: ");
+            builder.Append(Description);
+            builder.Append(", Price: { 'InitialValue': ");
+            builder.Append(Price.InitialValue);
+            builder.Append(", 'PriceSequence': ");
+            if (Price.PriceSequence is null)
+                builder.Append("null");
+            else
+            {
+                foreach (var price in Price.PriceSequence)
+                {
+                    builder.Append(price);
+                    builder.Append(", ");
+                }
+            }
+            builder.Append(", 'AmountLimitsToApplyDiscount': ");
+            if (Price.AmountLimitsToApplyDiscount is null)
+                builder.Append("null");
+            else
+            {
+                foreach (var limit in Price.AmountLimitsToApplyDiscount)
+                {
+                    builder.Append(limit);
+                    builder.Append(", ");
+                }
+            }
+            builder.Append(" }, PurchaseDate: ");
+            builder.Append(PurchaseDate);
+
+            return builder.ToString();
         }
     }
 }
