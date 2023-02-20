@@ -11,6 +11,10 @@ namespace Domain.Entities
         public Price Price { get; set; }
         public DateTime PurchaseDate { get; } = DateTime.Now;
 
+        public Item()
+        {
+        }
+        
         /// <summary>
         /// Cria entidade Item para ser usado em tabela de preço fixo.
         /// </summary>

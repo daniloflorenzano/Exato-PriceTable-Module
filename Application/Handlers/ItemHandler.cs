@@ -16,7 +16,7 @@ public class ItemHandler
         _schema = schema;
     }
 
-    public async Task<Item[]> ListAllItemsInTable()
+    public async Task<List<Item>> ListAllItemsInTable()
     {
         try
         {
