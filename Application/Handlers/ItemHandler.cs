@@ -31,6 +31,22 @@ public class ItemHandler
             throw;
         }
     }
+    
+    public async Task<List<Item>> ListItemsInTableSinceDate(DateTime date)
+    {
+        try
+        {
+            var repository = _repositoryFactory.Create(_schema);
+            var result = await repository.ListItemsSinceDate(_tableExternalId, date);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
     public async Task<Item> GetItemByExternalIdInTable(Guid itemExternalId)
     {

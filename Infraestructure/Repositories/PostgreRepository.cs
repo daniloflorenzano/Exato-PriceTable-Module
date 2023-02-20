@@ -158,6 +158,17 @@ public class PostgreRepository : IRepository
         return items;
     }
 
+    public async Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date)
+    {
+        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == tableExternalId);
+        var tableName = table.Name;
+        var dateFormated = FormatDateForSqlQuery(date);
+
+        var query = $"select * from {_schema}.{tableName} where purchase_date > '{dateFormated}'";
+        var items = _dbContext.Items.FromSqlRaw(query).ToList();
+        return items;
+    }
+
     public Task<Item> GetItemByExternalId(Guid itemExternalId, Guid tableExternalId)
     {
         throw new NotImplementedException();

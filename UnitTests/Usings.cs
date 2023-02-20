@@ -58,8 +58,14 @@ public class Usings
     [Test] public async Task ListItems_Should_Work()
     {
         var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
-        var newItem = new Item("Item Teste", 0.19m);
 
         var items = await _exatoPriceTableModule.ListItems(externalId);
+    }
+    
+    [Test] public async Task ListItemsSinceDate_Should_Work()
+    {
+        var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
+
+        var items = await _exatoPriceTableModule.ListItemsSinceDate(externalId, DateTime.Today);
     }
 }
