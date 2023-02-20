@@ -17,7 +17,7 @@ public class Usings
     [Test]
     public async Task CreateTable_Should_Work()
     {
-        await _exatoPriceTableModule.CreateTable("Outra tabela do dale", "descricao", DiscountType.FixedPrice, null);
+        await _exatoPriceTableModule.CreateTable("preco fixo", "descricao", DiscountType.FixedPrice, null);
     }
     
     [Test]
@@ -29,13 +29,13 @@ public class Usings
     [Test]
     public async Task GetTableById_Should_Work()
     {
-        var externalId = Guid.Parse("4bdb1f65-f2b6-4437-bbcd-ef743f9eca5b");
-        var table = await _exatoPriceTableModule.GetTableByExternalId(externalId);
+        var externalId = Guid.Parse("1184a0f7-00cb-4675-b559-1d36e85a82d6");
+        await _exatoPriceTableModule.GetTableByExternalId(externalId);
     }
 
     [Test] public async Task DeleteTable_Should_Work()
     {
-        var externalId = Guid.Parse("4bdb1f65-f2b6-4437-bbcd-ef743f9eca5b");
+        var externalId = Guid.Parse("c3cba4ef-3300-41d7-a76a-f3e6259031d0");
         await _exatoPriceTableModule.DeleteTable(externalId);
     }
     
@@ -45,5 +45,13 @@ public class Usings
         var table = new Table("NovoNome", "atualizando a tabela", null, DiscountType.FixedPrice);
 
         await _exatoPriceTableModule.UpdateTable(externalId, table);
+    }
+    
+    [Test] public async Task CreateItemWithFixedPrice_Should_Work()
+    {
+        var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
+        var newItem = new Item("Item Teste", 0.19m);
+
+        await _exatoPriceTableModule.CreateItem(newItem, externalId);
     }
 }

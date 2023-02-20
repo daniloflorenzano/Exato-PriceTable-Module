@@ -1,4 +1,5 @@
-﻿using Domain.Abstractions;
+﻿using System.Text.Json;
+using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,6 +76,11 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync(createQuery);
     }
 
+    private string FormatDateForSqlQuery(DateTime date)
+    {
+        return date.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+    
     public async Task<List<Table?>> ListTables()
     {
         return await _dbContext.Tables.ToListAsync();
@@ -123,7 +129,23 @@ public class PostgreRepository : IRepository
 
     public async Task CreateItem(Item item, Guid tableExternalId)
     {
-        throw new NotImplementedException();
+        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == tableExternalId);
+        var tableId = table.Id;
+        var tableName = table.Name;
+        var itemPriceAsJson = JsonSerializer.Serialize(item.Price);
+        var itemPurchaseDate = FormatDateForSqlQuery(item.PurchaseDate);
+        var a = itemPriceAsJson.Replace('"', '\'');
+
+        var query = $"insert into {_schema}.{tableName} " +
+                    "(table_id, external_id, description, price, purchase_date) " +
+                    "values (" +
+                    $"{tableId}, " +
+                    $"'{item.ExternalId}', " +
+                    $"'{item.Description}', " +
+                    $"'{{{itemPriceAsJson}}}', " +
+                    $"'{itemPurchaseDate}')";
+        
+        _dbContext.Database.ExecuteSqlRaw(query);
     }
 
     public Task<Item[]> ListItems(Guid tableExternalId)

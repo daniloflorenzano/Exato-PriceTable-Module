@@ -179,9 +179,28 @@ public class ExatoPriceTableModule
 
         try
         {
-            var repository = repositoryFactory.Create(_schema);
-            await repository.DeleteTable(externalId);
+            var tableHanlder = new TableHandler(repositoryFactory, logger, _schema);
+            await tableHanlder.DeleteTable(externalId);
             logger.Information("Table deleted");
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
+    }
+    
+    public async Task CreateItem(Item item, Guid tableExternalId)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+
+        try
+        {
+            var itemHandler = new ItemHandler(repositoryFactory, tableExternalId, _schema);
+            await itemHandler.CreateItemInTable(item);
         }
         catch (Exception e)
         {
@@ -234,6 +253,7 @@ public class ExatoPriceTableModule
 
         return totalPrice;
     }
+    
 
     private void InitiateDependencyContainer(out IRepositoryFactory? repositoryFactory, out ILogger? logger)
     {
