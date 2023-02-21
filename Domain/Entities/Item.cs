@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Domain.Entities.Enums;
 using Domain.Primitives;
 using Domain.ValueObjects;
@@ -56,7 +57,7 @@ namespace Domain.Entities
             builder.Append("Description: ");
             builder.Append(Description);
             builder.Append(", Price: { 'InitialValue': ");
-            builder.Append(Price.InitialValue);
+            builder.Append(Price.InitialValue.ToString(CultureInfo.InvariantCulture));
             builder.Append(", 'PriceSequence': ");
             if (Price.PriceSequence is null)
                 builder.Append("null");
@@ -64,7 +65,7 @@ namespace Domain.Entities
             {
                 foreach (var price in Price.PriceSequence)
                 {
-                    builder.Append(price);
+                    builder.Append(price.ToString(CultureInfo.InvariantCulture));
                     builder.Append(", ");
                 }
             }
