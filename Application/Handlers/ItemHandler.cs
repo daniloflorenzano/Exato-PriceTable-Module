@@ -1,5 +1,6 @@
 ﻿using Domain.Abstractions;
 using Domain.Entities;
+using Domain.Entities.Enums;
 
 namespace Application.Handlers;
 
@@ -69,6 +70,15 @@ public class ItemHandler
         try
         {
             var repository = _repositoryFactory.Create(_schema);
+            var table = await repository.GetTableByExternalId(_tableExternalId);
+            if (table is null)
+                throw new Exception("Table not found");
+            
+            var tableType = table.Type;
+
+            if (item.Price.PriceSequence is not null && tableType == DiscountType.FixedPrice)
+                throw new Exception("You cannot insert this item in a Fixed Price table.");
+            
             await repository.CreateItem(item, _tableExternalId);
         }
         catch (Exception e)

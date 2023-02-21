@@ -17,7 +17,7 @@ public class Usings
     [Test]
     public async Task CreateTable_Should_Work()
     {
-        await _exatoPriceTableModule.CreateTable("preco fixo", "descricao", DiscountType.FixedPrice, null);
+        await _exatoPriceTableModule.CreateTable("desconto cumulativo", "descricao", DiscountType.CumulativeDiscount, null);
     }
     
     [Test]
@@ -55,11 +55,26 @@ public class Usings
         await _exatoPriceTableModule.CreateItem(newItem, externalId);
     }
     
+    [Test] public async Task CreateItemWithCumulativeDiscount_Should_Work()
+    {
+        var externalId = Guid.Parse("d58415ce-456a-4fde-a3a1-a91394fde461");
+        var priceSequence = new List<decimal> { 0.80m, 0.50m, 0.30m };
+        var limitSequence = new List<int> { 10, 20, 30 };
+
+        var newItem = new Item("Item 3", 0.99m, priceSequence, limitSequence);
+
+        await _exatoPriceTableModule.CreateItem(newItem, externalId);
+    }
+    
     [Test] public async Task ListItems_Should_Work()
     {
-        var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
+        var externalId = Guid.Parse("d58415ce-456a-4fde-a3a1-a91394fde461");
 
         var items = await _exatoPriceTableModule.ListItems(externalId);
+        foreach (var item in items)
+        {
+            Console.WriteLine(item);
+        }
     }
     
     [Test] public async Task ListItemsSinceDate_Should_Work()
@@ -67,5 +82,9 @@ public class Usings
         var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
 
         var items = await _exatoPriceTableModule.ListItemsSinceDate(externalId, DateTime.Today);
+        foreach (var item in items)
+        {
+            Console.WriteLine(item);
+        }
     }
 }
