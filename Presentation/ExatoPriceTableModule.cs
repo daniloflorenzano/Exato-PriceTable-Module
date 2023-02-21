@@ -247,6 +247,25 @@ public class ExatoPriceTableModule
         }
     }
     
+    public async Task<Item> GetItemByExternalId(Guid tableExternalId, Guid itemExternalId)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        if (repositoryFactory is null || logger is null)
+            throw new Exception("There is a problem with the dependency injection container");
+
+        try
+        {
+            var itemHandler = new ItemHandler(repositoryFactory, tableExternalId, _schema);
+            return await itemHandler.GetItemByExternalIdInTable(itemExternalId);
+        }
+        catch (Exception e)
+        {
+            logger.Error(e.Message);
+            throw;
+        }
+    }
+    
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
     {
         // try
@@ -304,4 +323,6 @@ public class ExatoPriceTableModule
         repositoryFactory = serviceProvider.GetService<IRepositoryFactory>();
         logger = serviceProvider.GetService<ILogger>();
     }
+
+
 }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Domain.Abstractions;
 using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories;
@@ -8,7 +9,7 @@ namespace Infraestructure.Repositories;
 public class PostgreRepository : IRepository
 {
     private readonly ApplicationDbContext _dbContext;
-    private string _schema;
+    private readonly string _schema;
 
     public PostgreRepository(ApplicationDbContext dbContext, string schema)
     {
@@ -81,14 +82,19 @@ public class PostgreRepository : IRepository
         return date.ToString("yyyy-MM-dd HH:mm:ss");
     }
     
-    public async Task<List<Table?>> ListTables()
+    public async Task<List<Table>> ListTables()
     {
-        return await _dbContext.Tables.ToListAsync();
+        var tables = await _dbContext.Tables.ToListAsync();
+        return tables!;
     }
 
-    public async Task<Table?> GetTableByExternalId(Guid externalId)
+    public async Task<Table> GetTableByExternalId(Guid externalId)
     {
-        return await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == externalId);
+        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == externalId);
+        if (table is null)
+            throw new TableNotFoundException();
+
+        return table;
     }
 
     public async Task UpdateTable(Guid externalId, Table table)
@@ -105,7 +111,7 @@ public class PostgreRepository : IRepository
 
         await _dbContext.Database.ExecuteSqlRawAsync(updateQuery);
 
-        var oldName = existingTable!.Name;
+        var oldName = existingTable.Name;
         var renameQuery = $"alter table {_schema}.{oldName} rename to {table.Name};";
 
         await _dbContext.Database.ExecuteSqlRawAsync(renameQuery);
@@ -113,11 +119,8 @@ public class PostgreRepository : IRepository
 
     public async Task DeleteTable(Guid externalId)
     {
-        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == externalId);
+        var table = await GetTableByExternalId(externalId);
 
-        if (table is null)
-            throw new Exception("Table not found");
-        
         var tableName = table.Name;
         
         var dropQuery = $"drop table {_schema}.{tableName}";
@@ -129,7 +132,7 @@ public class PostgreRepository : IRepository
 
     public async Task CreateItem(Item item, Guid tableExternalId)
     {
-        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == tableExternalId);
+        var table = await GetTableByExternalId(tableExternalId);
         var tableId = table.Id;
         var tableName = table.Name;
         var itemPriceAsJson = JsonSerializer.Serialize(item.Price);
@@ -150,7 +153,7 @@ public class PostgreRepository : IRepository
 
     public async Task<List<Item>> ListItems(Guid tableExternalId)
     {
-        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == tableExternalId);
+        var table = await GetTableByExternalId(tableExternalId);
         var tableName = table.Name;
 
         var query = $"select * from {_schema}.{tableName}";
@@ -160,7 +163,7 @@ public class PostgreRepository : IRepository
 
     public async Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date)
     {
-        var table = await _dbContext.Tables.FirstOrDefaultAsync(table => table.ExternalId == tableExternalId);
+        var table = await GetTableByExternalId(tableExternalId);
         var tableName = table.Name;
         var dateFormated = FormatDateForSqlQuery(date);
 
@@ -169,9 +172,18 @@ public class PostgreRepository : IRepository
         return items;
     }
 
-    public Task<Item> GetItemByExternalId(Guid itemExternalId, Guid tableExternalId)
+    public async Task<Item> GetItemByExternalId(Guid tableExternalId, Guid itemExternalId)
     {
-        throw new NotImplementedException();
+        var table = await GetTableByExternalId(tableExternalId);
+        var tableName = table.Name;
+
+        var query = $"select * from {_schema}.{tableName} where external_id = '{itemExternalId}'";
+        var item = _dbContext.Items.FromSqlRaw(query).FirstOrDefault();
+
+        if (item is null)
+            throw new ItemNotFoundException();
+
+        return item;
     }
 
     public Task UpdateItem(Guid itemExternalId, Item item, Guid tableExternalId)

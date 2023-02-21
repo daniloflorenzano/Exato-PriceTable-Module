@@ -54,7 +54,7 @@ public class ItemHandler
         try
         {
             var repository = _repositoryFactory.Create(_schema);
-            var result = await repository.GetItemByExternalId(itemExternalId, _tableExternalId);
+            var result = await repository.GetItemByExternalId(_tableExternalId, itemExternalId);
 
             return result;
         }

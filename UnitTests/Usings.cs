@@ -30,7 +30,8 @@ public class Usings
     public async Task GetTableById_Should_Work()
     {
         var externalId = Guid.Parse("1184a0f7-00cb-4675-b559-1d36e85a82d6");
-        await _exatoPriceTableModule.GetTableByExternalId(externalId);
+        var table = await _exatoPriceTableModule.GetTableByExternalId(externalId);
+        Console.WriteLine(table);
     }
 
     [Test] public async Task DeleteTable_Should_Work()
@@ -86,5 +87,14 @@ public class Usings
         {
             Console.WriteLine(item);
         }
+    }
+    
+    [Test] public async Task GetItemByExternalId_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("d58415ce-456a-4fde-a3a1-a91394fde461");
+        var itemExternalId = Guid.Parse("4e3f185a-c9c6-40b9-85e9-9f1284d685ec");
+        
+        var item = await _exatoPriceTableModule.GetItemByExternalId(tableExternalId, itemExternalId);
+        Console.WriteLine(item);
     }
 }
