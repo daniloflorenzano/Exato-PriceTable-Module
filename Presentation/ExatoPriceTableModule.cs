@@ -26,33 +26,17 @@ public class ExatoPriceTableModule
     public async Task CreateTable(string name, string description, DiscountType discountType, DateTime? expirationDate)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
-        
+
         if (repositoryFactory is null || logger is null)
             throw new Exception("There is a problem with the dependency injection container");
 
-        try
-        {
-            await CreateSchema();
-            await CreateTablesTable();
+        await CreateSchema();
+        await CreateTablesTable();
 
-            var table = new Table(name, description, expirationDate, discountType);
-            var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
-            await tableHandler.CreateTable(table);
-            logger.Information($"Created: [{table}].");
-        }
-        catch (PostgresException e) when (e.Message.Contains("violates unique constraint"))
-        {
-            throw new Exception($"Table '{name}' already exists");
-        }
-        catch (PostgresException e) when(e.Message.Contains("already exists"))
-        {
-            logger.Warning($"{e.Message}, continuing...");
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var table = new Table(name, description, expirationDate, discountType);
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        await tableHandler.CreateTable(table);
+        logger.Information($"Created: [{table}].");
     }
 
     private async Task CreateSchema()
@@ -61,21 +45,9 @@ public class ExatoPriceTableModule
         
         if (repositoryFactory is null || logger is null)
             throw new Exception("There is a problem with the dependency injection container");
-        
-        try
-        {
-            var repository = repositoryFactory.Create(_schema);
-            await repository.CreateSchema();
-        }
-        catch (PostgresException e) when(e.Message.Contains("already exists"))
-        {
-            logger.Warning($"{e.Message}, continuing...");
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        await tableHandler.CreateSchema(_schema);
     }
     
     private async Task CreateTablesTable()
@@ -84,23 +56,11 @@ public class ExatoPriceTableModule
         
         if (repositoryFactory is null || logger is null)
             throw new Exception("There is a problem with the dependency injection container");
-        
-        try
-        {
-            await CreateSchema();
-            
-            var repository = repositoryFactory.Create(_schema);
-            await repository.CreateTablesTable();
-        }
-        catch (PostgresException e) when(e.Message.Contains("already exists"))
-        {
-            logger.Warning($"{e.Message}, continuing...");
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+
+        await CreateSchema();
+
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        await tableHandler.CreateRegisterTable();
     }
 
     public async Task<List<Table>> ListTables()
@@ -110,160 +70,72 @@ public class ExatoPriceTableModule
         if (repositoryFactory is null || logger is null)
             throw new Exception("There is a problem with the dependency injection container");
 
-        try
-        {
-            var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
-            var tables = await tableHandler.ListTables();
-            logger.Information($"Found {tables.Count} tables");
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        var tables = await tableHandler.ListTables();
+        logger.Information($"Found {tables.Count} tables");
 
-            return tables!;
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        return tables;
     }
 
-    public async Task<Table?> GetTableByExternalId(Guid externalId)
+    public async Task<Table> GetTableByExternalId(Guid externalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
-        
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
 
-        try
-        {
-            var tableHhandler = new TableHandler(repositoryFactory, logger, _schema);
-            var table = await tableHhandler.GetTableByExternalId(externalId);
-            
-            if (table is null)
-                throw new Exception("Table not found");
-            
-            logger.Information($"Table founded: [{table}].");
-            return table;
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var tableHhandler = new TableHandler(repositoryFactory, logger, _schema);
+        var table = await tableHhandler.GetTableByExternalId(externalId);
+
+        logger.Information($"Table founded: [{table}].");
+        return table;
     }
 
     public async Task UpdateTable(Guid externalId, Table table)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
-
-        try
-        {
-            var tablheHandler = new TableHandler(repositoryFactory, logger, _schema);
-            await tablheHandler.UpdateTable(externalId, table);
-            logger.Information($"Table updated: {table}");
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var tablheHandler = new TableHandler(repositoryFactory, logger, _schema);
+        await tablheHandler.UpdateTable(externalId, table);
+        logger.Information($"Table updated: {table}");
     }
     
     public async Task DeleteTable(Guid externalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
-
-        try
-        {
-            var tableHanlder = new TableHandler(repositoryFactory, logger, _schema);
-            await tableHanlder.DeleteTable(externalId);
-            logger.Information("Table deleted");
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var tableHanlder = new TableHandler(repositoryFactory, logger, _schema);
+        await tableHanlder.DeleteTable(externalId);
+        logger.Information("Table deleted");
     }
     
     public async Task CreateItem(Item item, Guid tableExternalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
-        
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
 
-        try
-        {
-            var itemHandler = new ItemHandler(repositoryFactory, tableExternalId, _schema);
-            await itemHandler.CreateItemInTable(item);
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        await itemHandler.CreateItemInTable(item);
     }
     
     public async Task<List<Item>> ListItems(Guid tableExternalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
-        
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
 
-        try
-        {
-            var itemHandler = new ItemHandler(repositoryFactory, tableExternalId, _schema);
-            return await itemHandler.ListAllItemsInTable();
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        return await itemHandler.ListAllItemsInTable();
     }
     
     public async Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
-        
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
 
-        try
-        {
-            var itemHandler = new ItemHandler(repositoryFactory, tableExternalId, _schema);
-            return await itemHandler.ListItemsInTableSinceDate(date);
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        return await itemHandler.ListItemsInTableSinceDate(date);
     }
     
     public async Task<Item> GetItemByExternalId(Guid tableExternalId, Guid itemExternalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
-        if (repositoryFactory is null || logger is null)
-            throw new Exception("There is a problem with the dependency injection container");
-
-        try
-        {
-            var itemHandler = new ItemHandler(repositoryFactory, tableExternalId, _schema);
-            return await itemHandler.GetItemByExternalIdInTable(itemExternalId);
-        }
-        catch (Exception e)
-        {
-            logger.Error(e.Message);
-            throw;
-        }
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        return await itemHandler.GetItemByExternalIdInTable(itemExternalId);
     }
     
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
@@ -312,7 +184,7 @@ public class ExatoPriceTableModule
     }
     
 
-    private void InitiateDependencyContainer(out IRepositoryFactory? repositoryFactory, out ILogger? logger)
+    private void InitiateDependencyContainer(out IRepositoryFactory repositoryFactory, out ILogger logger)
     {
         var serviceProvider = new ServiceCollection()
             .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_connectionString))
@@ -320,8 +192,13 @@ public class ExatoPriceTableModule
             .AddSingleton<ILogger, SerilogWrapper>()
             .BuildServiceProvider();
 
-        repositoryFactory = serviceProvider.GetService<IRepositoryFactory>();
-        logger = serviceProvider.GetService<ILogger>();
+        var exceptionMessage = "Dependecy container could not initiate";
+        
+        repositoryFactory = serviceProvider.GetService<IRepositoryFactory>() ?? 
+                            throw new InvalidOperationException(exceptionMessage);
+        
+        logger = serviceProvider.GetService<ILogger>() ?? 
+                 throw new InvalidOperationException(exceptionMessage);
     }
 
 

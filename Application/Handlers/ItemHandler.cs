@@ -1,18 +1,22 @@
-﻿using Domain.Abstractions;
+﻿using Application.Abstractions;
+using Domain.Abstractions;
 using Domain.Entities;
 using Domain.Entities.Enums;
+using Domain.Exceptions;
 
 namespace Application.Handlers;
 
 public class ItemHandler
 {
     private readonly IRepositoryFactory _repositoryFactory;
+    private readonly ILogger _logger;
     private readonly Guid _tableExternalId;
     private string _schema;
 
-    public ItemHandler(IRepositoryFactory repositoryFactory, Guid tableExternalId, string schema)
+    public ItemHandler(IRepositoryFactory repositoryFactory, ILogger logger, Guid tableExternalId, string schema)
     {
         _repositoryFactory = repositoryFactory;
+        _logger = logger;
         _tableExternalId = tableExternalId;
         _schema = schema;
     }
@@ -26,9 +30,14 @@ public class ItemHandler
 
             return result;
         }
+        catch (TableNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Error("Unknown errror: " + e.Message);
             throw;
         }
     }
@@ -37,14 +46,27 @@ public class ItemHandler
     {
         try
         {
+            if (date > DateTime.Now)
+                throw new CannotUseFutureDateException(date);
+
             var repository = _repositoryFactory.Create(_schema);
             var result = await repository.ListItemsSinceDate(_tableExternalId, date);
 
             return result;
         }
+        catch (CannotUseFutureDateException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
+        catch (TableNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Error("Unknown errror: " + e.Message);
             throw;
         }
     }
@@ -58,9 +80,19 @@ public class ItemHandler
 
             return result;
         }
+        catch (TableNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
+        catch (ItemNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Error("Unknown errror: " + e.Message);
             throw;
         }
     }
@@ -71,19 +103,27 @@ public class ItemHandler
         {
             var repository = _repositoryFactory.Create(_schema);
             var table = await repository.GetTableByExternalId(_tableExternalId);
-            if (table is null)
-                throw new Exception("Table not found");
-            
+
             var tableType = table.Type;
 
             if (item.Price.PriceSequence is not null && tableType == DiscountType.FixedPrice)
-                throw new Exception("You cannot insert this item in a Fixed Price table.");
-            
+                throw new CannotInserItemException("You cannot insert this item in a Fixed Price table.");
+
             await repository.CreateItem(item, _tableExternalId);
+        }
+        catch (TableNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
+        catch (CannotInserItemException e)
+        {
+            _logger.Error(e.Message);
+            throw;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Error("Unknown errror: " + e.Message);
             throw;
         }
     }
@@ -98,16 +138,11 @@ public class ItemHandler
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Error("Unknown errror: " + e.Message);
             throw;
         }
     }
 
-    public async Task<List<Item>> ListItemsInTableInDateRange(DateTime initialDate, DateTime limitDate)
-    {
-        throw new NotImplementedException();
-    }
-    
     public List<List<Item>> SegregateItems(List<Item> items)
     {
         var descriptions = items.Select(i => i.Description).Distinct().ToList();

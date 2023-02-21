@@ -181,7 +181,7 @@ public class PostgreRepository : IRepository
         var item = _dbContext.Items.FromSqlRaw(query).FirstOrDefault();
 
         if (item is null)
-            throw new ItemNotFoundException();
+            throw new ItemNotFoundException(itemExternalId);
 
         return item;
     }
