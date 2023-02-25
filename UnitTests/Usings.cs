@@ -1,6 +1,7 @@
 ﻿global using NUnit.Framework;
 using Domain.Entities;
 using Domain.Entities.Enums;
+using Domain.ValueObjects;
 using Presentation;
 
 public class Usings
@@ -96,6 +97,20 @@ public class Usings
         
         var item = await _exatoPriceTableModule.GetItemByExternalId(tableExternalId, itemExternalId);
         Console.WriteLine(item);
+    }
+    
+    [Test] public async Task UpdateItem_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
+        var itemExternalId = Guid.Parse("b02dafbc-2ffa-4a5c-8265-3bd338add696");
+        var price = new Price()
+        {
+            InitialValue = 0.21m,
+            PriceSequence = new List<decimal>()
+        };
+        Item item = new() { Description = "testando update", Price = price};
+        
+        await _exatoPriceTableModule.UpdateItem(tableExternalId, itemExternalId, item);
     }
     
     [Test] public async Task DeleteItem_Should_Work()

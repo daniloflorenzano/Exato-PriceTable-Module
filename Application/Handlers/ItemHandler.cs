@@ -133,8 +133,25 @@ public class ItemHandler
         try
         {
             var repository = _repositoryFactory.Create(_schema);
+            var table = await repository.GetTableByExternalId(_tableExternalId);
+            var tableType = table.Type;
+
+            var errMsg =
+                "You cannot use this price configuration in a Fixed Price table. PriceSequence and AmountLimitsToApply must be null";
+            if (tableType is DiscountType.FixedPrice && item.Price.PriceSequence is not null)
+                throw new CannotUpdateItemException(errMsg);
 
             await repository.UpdateItem(itemExtenalId, item, _tableExternalId);
+        }
+        catch (TableNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
+        catch (CannotUpdateItemException e)
+        {
+            _logger.Error(e.Message);
+            throw;
         }
         catch (Exception e)
         {

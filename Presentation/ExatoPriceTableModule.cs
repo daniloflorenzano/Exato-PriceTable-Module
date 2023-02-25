@@ -138,6 +138,14 @@ public class ExatoPriceTableModule
         return await itemHandler.GetItemByExternalIdInTable(itemExternalId);
     }
     
+    public async Task UpdateItem(Guid tableExternalId, Guid itemExternalId, Item item)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        await itemHandler.UpdateItemInTable(itemExternalId, item);
+    }
+    
     public async Task DeleteItem(Guid tableExternalId, Guid itemExternalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);

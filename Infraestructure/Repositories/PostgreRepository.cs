@@ -137,7 +137,6 @@ public class PostgreRepository : IRepository
         var tableName = table.Name;
         var itemPriceAsJson = JsonSerializer.Serialize(item.Price);
         var itemPurchaseDate = FormatDateForSqlQuery(item.PurchaseDate);
-        var a = itemPriceAsJson.Replace('"', '\'');
 
         var query = $"insert into {_schema}.{tableName} " +
                     "(table_id, external_id, description, price, purchase_date) " +
@@ -186,16 +185,25 @@ public class PostgreRepository : IRepository
         return item;
     }
 
-    public Task UpdateItem(Guid itemExternalId, Item item, Guid tableExternalId)
+    public async Task UpdateItem(Guid itemExternalId, Item item, Guid tableExternalId)
     {
-        throw new NotImplementedException();
+        var table = await GetTableByExternalId(tableExternalId);
+        var tableName = table.Name;
+        await GetItemByExternalId(tableExternalId, itemExternalId);
+        var itemPriceAsJson = JsonSerializer.Serialize(item.Price);
+        
+        var query = $"update {_schema}.{tableName} set " +
+                    $"description = '{item.Description}', " +
+                    $"price = '{{{itemPriceAsJson}}}' " +
+                    $"where external_id = '{itemExternalId}'";
+
+        await _dbContext.Database.ExecuteSqlRawAsync(query);
     }
 
     public async Task DeleteItem(Guid itemExternalId, Guid tableExternalId)
     {
         var table = await GetTableByExternalId(tableExternalId);
         var tableName = table.Name;
-
         await GetItemByExternalId(tableExternalId, itemExternalId);
 
         var query = $"delete from {_schema}.{tableName} where external_id = '{itemExternalId}'";
