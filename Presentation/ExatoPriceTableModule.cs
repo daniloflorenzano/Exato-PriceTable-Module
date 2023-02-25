@@ -35,7 +35,7 @@ public class ExatoPriceTableModule
 
         var table = new Table(name, description, expirationDate, discountType);
         var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
-        await tableHandler.CreateTable(table);
+        await tableHandler.Create(table);
         logger.Information($"Created: [{table}].");
     }
 
@@ -71,7 +71,7 @@ public class ExatoPriceTableModule
             throw new Exception("There is a problem with the dependency injection container");
 
         var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
-        var tables = await tableHandler.ListTables();
+        var tables = await tableHandler.ListAll();
         logger.Information($"Found {tables.Count} tables");
 
         return tables;
@@ -82,7 +82,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var tableHhandler = new TableHandler(repositoryFactory, logger, _schema);
-        var table = await tableHhandler.GetTableByExternalId(externalId);
+        var table = await tableHhandler.GetByExternalId(externalId);
 
         logger.Information($"Table founded: [{table}].");
         return table;
@@ -93,7 +93,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
         var tablheHandler = new TableHandler(repositoryFactory, logger, _schema);
-        await tablheHandler.UpdateTable(externalId, table);
+        await tablheHandler.Update(externalId, table);
         logger.Information($"Table updated: {table}");
     }
     
@@ -102,7 +102,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
         var tableHanlder = new TableHandler(repositoryFactory, logger, _schema);
-        await tableHanlder.DeleteTable(externalId);
+        await tableHanlder.Delete(externalId);
         logger.Information("Table deleted");
     }
     
@@ -111,7 +111,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
-        await itemHandler.CreateItemInTable(item);
+        await itemHandler.Create(item);
     }
     
     public async Task<List<Item>> ListItems(Guid tableExternalId)
@@ -119,7 +119,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
-        return await itemHandler.ListAllItemsInTable();
+        return await itemHandler.ListAll();
     }
     
     public async Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date)
@@ -127,7 +127,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
-        return await itemHandler.ListItemsInTableSinceDate(date);
+        return await itemHandler.ListSinceDate(date);
     }
     
     public async Task<Item> GetItemByExternalId(Guid tableExternalId, Guid itemExternalId)
@@ -135,7 +135,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
         
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
-        return await itemHandler.GetItemByExternalIdInTable(itemExternalId);
+        return await itemHandler.GetByExternalId(itemExternalId);
     }
     
     public async Task UpdateItem(Guid tableExternalId, Guid itemExternalId, Item item)
@@ -143,7 +143,7 @@ public class ExatoPriceTableModule
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
-        await itemHandler.UpdateItemInTable(itemExternalId, item);
+        await itemHandler.Update(itemExternalId, item);
     }
     
     public async Task DeleteItem(Guid tableExternalId, Guid itemExternalId)

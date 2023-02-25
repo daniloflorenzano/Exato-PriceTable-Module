@@ -21,7 +21,7 @@ public class ItemHandler
         _schema = schema;
     }
 
-    public async Task<List<Item>> ListAllItemsInTable()
+    public async Task<List<Item>> ListAll()
     {
         try
         {
@@ -42,7 +42,7 @@ public class ItemHandler
         }
     }
     
-    public async Task<List<Item>> ListItemsInTableSinceDate(DateTime date)
+    public async Task<List<Item>> ListSinceDate(DateTime date)
     {
         try
         {
@@ -71,7 +71,7 @@ public class ItemHandler
         }
     }
 
-    public async Task<Item> GetItemByExternalIdInTable(Guid itemExternalId)
+    public async Task<Item> GetByExternalId(Guid itemExternalId)
     {
         try
         {
@@ -97,13 +97,12 @@ public class ItemHandler
         }
     }
 
-    public async Task CreateItemInTable(Item item)
+    public async Task Create(Item item)
     {
         try
         {
             var repository = _repositoryFactory.Create(_schema);
             var table = await repository.GetTableByExternalId(_tableExternalId);
-
             var tableType = table.Type;
 
             if (item.Price.PriceSequence is not null && tableType == DiscountType.FixedPrice)
@@ -128,7 +127,7 @@ public class ItemHandler
         }
     }
 
-    public async Task UpdateItemInTable(Guid itemExtenalId, Item item)
+    public async Task Update(Guid itemExtenalId, Item item)
     {
         try
         {

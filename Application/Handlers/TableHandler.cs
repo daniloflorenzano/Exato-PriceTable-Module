@@ -18,7 +18,7 @@ public class TableHandler
         _schema = schema;
     }
 
-    public async Task<List<Table>> ListTables()
+    public async Task<List<Table>> ListAll()
     {
         try
         {
@@ -34,7 +34,7 @@ public class TableHandler
         }
     }
 
-    public async Task<Table> GetTableByExternalId(Guid externalId)
+    public async Task<Table> GetByExternalId(Guid externalId)
     {
         try
         {
@@ -55,7 +55,7 @@ public class TableHandler
         }
     }
     
-    public async Task CreateTable(Table table)
+    public async Task Create(Table table)
     {
         try
         {
@@ -82,7 +82,7 @@ public class TableHandler
         }
     }
 
-    public async Task UpdateTable(Guid tableExternalId, Table table)
+    public async Task Update(Guid tableExternalId, Table table)
     {
         try
         {
@@ -111,7 +111,7 @@ public class TableHandler
         }
     }
 
-    public async Task DeleteTable(Guid externalId)
+    public async Task Delete(Guid externalId)
     {
         try
         {
