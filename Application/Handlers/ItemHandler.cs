@@ -142,6 +142,30 @@ public class ItemHandler
             throw;
         }
     }
+    
+    public async Task Delete(Guid itemExternalId)
+    {
+        try
+        {
+            var repository = _repositoryFactory.Create(_schema);
+            await repository.DeleteItem(itemExternalId, _tableExternalId);
+        }
+        catch (TableNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
+        catch (ItemNotFoundException e)
+        {
+            _logger.Error(e.Message);
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.Error("Unknown errror: " + e.Message);
+            throw;
+        }
+    }
 
     public List<List<Item>> SegregateItems(List<Item> items)
     {

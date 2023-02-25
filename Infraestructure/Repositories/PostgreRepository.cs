@@ -191,8 +191,14 @@ public class PostgreRepository : IRepository
         throw new NotImplementedException();
     }
 
-    public Task DeleteItem(Guid itemExternalId, Guid tableExternalId)
+    public async Task DeleteItem(Guid itemExternalId, Guid tableExternalId)
     {
-        throw new NotImplementedException();
+        var table = await GetTableByExternalId(tableExternalId);
+        var tableName = table.Name;
+
+        await GetItemByExternalId(tableExternalId, itemExternalId);
+
+        var query = $"delete from {_schema}.{tableName} where external_id = '{itemExternalId}'";
+        await _dbContext.Database.ExecuteSqlRawAsync(query);
     }
 }

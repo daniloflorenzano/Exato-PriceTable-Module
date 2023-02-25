@@ -42,7 +42,7 @@ public class Usings
     
     [Test] public async Task UpdateTable_Should_Work()
     {
-        var externalId = Guid.Parse("4e7da859-a7b2-4f03-bfc4-63dbbce297a1");
+        var externalId = Guid.Parse("d58415ce-456a-4fde-a3a1-a91394fde461");
         var table = new Table("NovoNome", "atualizando a tabela", null, DiscountType.FixedPrice);
 
         await _exatoPriceTableModule.UpdateTable(externalId, table);
@@ -82,7 +82,7 @@ public class Usings
     {
         var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
 
-        var items = await _exatoPriceTableModule.ListItemsSinceDate(externalId, DateTime.Today);
+        var items = await _exatoPriceTableModule.ListItemsSinceDate(externalId, DateTime.Parse("2023-03-03"));
         foreach (var item in items)
         {
             Console.WriteLine(item);
@@ -96,5 +96,13 @@ public class Usings
         
         var item = await _exatoPriceTableModule.GetItemByExternalId(tableExternalId, itemExternalId);
         Console.WriteLine(item);
+    }
+    
+    [Test] public async Task DeleteItem_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("d58415ce-456a-4fde-a3a1-a91394fde461");
+        var itemExternalId = Guid.Parse("4e3f185a-c9c6-40b9-85e9-9f1284d685ec");
+        
+        await _exatoPriceTableModule.DeleteItem(tableExternalId, itemExternalId);
     }
 }

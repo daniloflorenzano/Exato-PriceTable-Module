@@ -138,6 +138,14 @@ public class ExatoPriceTableModule
         return await itemHandler.GetItemByExternalIdInTable(itemExternalId);
     }
     
+    public async Task DeleteItem(Guid tableExternalId, Guid itemExternalId)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        await itemHandler.Delete(itemExternalId);
+    }
+    
     public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
     {
         // try
@@ -200,6 +208,4 @@ public class ExatoPriceTableModule
         logger = serviceProvider.GetService<ILogger>() ?? 
                  throw new InvalidOperationException(exceptionMessage);
     }
-
-
 }
