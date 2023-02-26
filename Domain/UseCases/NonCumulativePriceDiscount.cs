@@ -1,12 +1,11 @@
-﻿using Application.Abstractions;
-using Domain.Entities;
+﻿using Domain.Entities;
 
-namespace Application.Handlers;
+namespace Domain.UseCases;
 
 // o preco dos itens comprados a partir da quantidade x tera um preco menor
-public sealed class NonCumulativePriceDiscountHandler : DiscountPriceHandler
+public sealed class NonCumulativePriceDiscount : DiscountPrice
 {
-    public NonCumulativePriceDiscountHandler(List<Item> items) : base(items)
+    public NonCumulativePriceDiscount(List<Item> items) : base(items)
     {
     }
 

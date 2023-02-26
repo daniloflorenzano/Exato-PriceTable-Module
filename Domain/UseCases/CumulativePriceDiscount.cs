@@ -1,15 +1,13 @@
-﻿using Application.Abstractions;
-using Domain.Entities;
+﻿using Domain.Entities;
 
-namespace Application.Handlers;
-
+namespace Domain.UseCases;
 
 // preco de todas os itens diminui a cada x quantidades compradas
-public sealed class CumulativePriceDiscountHandler : DiscountPriceHandler
+public sealed class CumulativePriceDiscount : DiscountPrice
 {
     // a lista de itens recebida ja deve vir filtrada com apenas itens iguais, e dado um periodo de tempo
     // exemplo: de tudo que o cliente comprou, a lista vira apenas com os itens A comprados no mes de dezembro
-    public CumulativePriceDiscountHandler(List<Item> items) : base(items)
+    public CumulativePriceDiscount(List<Item> items) : base(items)
     {
     }
 

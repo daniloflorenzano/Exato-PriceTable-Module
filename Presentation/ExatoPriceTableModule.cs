@@ -153,52 +153,6 @@ public class ExatoPriceTableModule
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
         await itemHandler.Delete(itemExternalId);
     }
-    
-    public async Task<decimal> CalculateTotalPriceInDateRange(Guid tableExternalId, DateTime initialDate, DateTime limitDate)
-    {
-        // try
-        // {
-        //     ItemHandler itemHandler = new (_repositoryFactory, tableExternalId);
-        //     TableHandler tableHandler = new(_repositoryFactory, _logger);
-        //     var table = await tableHandler.GetTableByExternalId(tableExternalId);
-        //     var tableType = table.Type;
-        //     var items = await itemHandler.ListItemsInTableInDateRange(initialDate, limitDate);
-        //     var groupsOfItems = itemHandler.SegregateItems(items);
-        //     var totalPrice = CalculateTotalPriceByTypeOfTable(groupsOfItems, tableType);
-        //
-        //     return totalPrice;
-        // }
-        // catch (Exception e)
-        // {
-        //     Console.WriteLine(e);
-        //     throw;
-        // }
-        throw new NotImplementedException();
-    }
-
-    private decimal CalculateTotalPriceByTypeOfTable(List<List<Item>> groupsOfItems, DiscountType tableType)
-    {
-        var totalPrice = 0.0m;
-        foreach (var group in groupsOfItems)
-        {
-            if (tableType == DiscountType.FixedPrice)
-                totalPrice += group.Count * group[0].Price.InitialValue;
-                
-            if (tableType == DiscountType.CumulativeDiscount)
-            {
-                CumulativePriceDiscountHandler discountHandler = new(group);
-                totalPrice += discountHandler.CalculateTotalPrice();
-            }
-            else
-            {
-                NonCumulativePriceDiscountHandler discountHandler = new(group);
-                totalPrice += discountHandler.CalculateTotalPrice();
-            }
-        }
-
-        return totalPrice;
-    }
-    
 
     private void InitiateDependencyContainer(out IRepositoryFactory repositoryFactory, out ILogger logger)
     {

@@ -28,7 +28,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
-        tableHandler.ListTables();
+        await tableHandler.ListAll();
 
         // Assert
         A.CallTo(() => repository.ListTables())
@@ -45,7 +45,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
-        await tableHandler.GetTableByExternalId(table.ExternalId);
+        await tableHandler.GetByExternalId(table.ExternalId);
 
         // Assert
         A.CallTo(() => repository.GetTableByExternalId(table.ExternalId))
@@ -63,7 +63,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
         
         // Act
-        Func<Task> func = async () => await tableHandler.GetTableByExternalId(externalId);
+        Func<Task> func = async () => await tableHandler.GetByExternalId(externalId);
 
         // Assert  
         await func.Should()
@@ -80,7 +80,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
-        await tableHandler.CreateTable(table);
+        await tableHandler.Create(table);
 
         // Assert
         A.CallTo(() => repository.CreateTable(table))
@@ -97,7 +97,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
-        await tableHandler.UpdateTable(table.ExternalId, table);
+        await tableHandler.Update(table.ExternalId, table);
 
         // Assert
         A.CallTo(() => repository.UpdateTable(table.ExternalId, table))
@@ -113,7 +113,7 @@ public class TableHandlerTests
         var tableHandler = new TableHandler(_repositoryFactory, _logger, "");
 
         // Act
-        await tableHandler.DeleteTable(table.ExternalId);
+        await tableHandler.Delete(table.ExternalId);
 
         // Assert
         A.CallTo(() => repository.DeleteTable(table.ExternalId))

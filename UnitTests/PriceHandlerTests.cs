@@ -1,7 +1,5 @@
-﻿using Application.Handlers;
-using Domain;
-using Domain.Entities;
-using Domain.Entities.Enums;
+﻿using Domain.Entities;
+using Domain.UseCases;
 using FluentAssertions;
 
 namespace UnitTests;
@@ -30,7 +28,7 @@ public class PriceHandlerTests
             new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
         };
 
-        var priceHandler = new CumulativePriceDiscountHandler(itemsList);
+        var priceHandler = new CumulativePriceDiscount(itemsList);
         var res = priceHandler.CalculateNextUnitPrice();
 
         res.Should().Be(2.0m);
@@ -58,7 +56,7 @@ public class PriceHandlerTests
             new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
         };
 
-        var priceHandler = new CumulativePriceDiscountHandler(itemsList);
+        var priceHandler = new CumulativePriceDiscount(itemsList);
         var res = priceHandler.CalculateTotalPrice();
 
         res.Should().Be(22.0m);
@@ -86,7 +84,7 @@ public class PriceHandlerTests
             new Item("A", 6.0m, priceSequence, amountLimitsToApplyDicount),
         };
 
-        var priceHandler = new NonCumulativePriceDiscountHandler(itemsList);
+        var priceHandler = new NonCumulativePriceDiscount(itemsList);
         var res = priceHandler.CalculateTotalPrice();
 
         res.Should().Be(37.0m);
