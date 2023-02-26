@@ -154,6 +154,21 @@ public class ExatoPriceTableModule
         await itemHandler.Delete(itemExternalId);
     }
 
+    public async Task<decimal> CalculatePrice(Guid tableExtenalId)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        var table = await tableHandler.GetByExternalId(tableExtenalId);
+        var tableType = table.Type;
+
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExtenalId, _schema);
+        var items = await itemHandler.ListAll();
+
+        var priceHandler = new PriceHandler(items, tableType);
+        return priceHandler.TotalPrice();
+    }
+
     private void InitiateDependencyContainer(out IRepositoryFactory repositoryFactory, out ILogger logger)
     {
         var serviceProvider = new ServiceCollection()

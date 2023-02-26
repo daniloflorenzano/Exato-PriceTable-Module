@@ -18,7 +18,7 @@ public class Usings
     [Test]
     public async Task CreateTable_Should_Work()
     {
-        await _exatoPriceTableModule.CreateTable("desconto cumulativo", "descricao", DiscountType.CumulativeDiscount, null);
+        await _exatoPriceTableModule.CreateTable("desconto nao cumulativo", "descricao", DiscountType.NonCumulativeDiscount, null);
     }
     
     [Test]
@@ -59,11 +59,11 @@ public class Usings
     
     [Test] public async Task CreateItemWithCumulativeDiscount_Should_Work()
     {
-        var externalId = Guid.Parse("d58415ce-456a-4fde-a3a1-a91394fde461");
-        var priceSequence = new List<decimal> { 0.80m, 0.50m, 0.30m };
-        var limitSequence = new List<int> { 10, 20, 30 };
+        var externalId = Guid.Parse("b22d4496-0e30-4a08-ab32-289cbc2e9258");
+        var priceSequence = new List<decimal> { 0.30m, 0.20m, 0.10m };
+        var limitSequence = new List<int> { 2, 4, 6 };
 
-        var newItem = new Item("Item 3", 0.99m, priceSequence, limitSequence);
+        var newItem = new Item("Item 2", 0.50m, priceSequence, limitSequence);
 
         await _exatoPriceTableModule.CreateItem(newItem, externalId);
     }
@@ -119,5 +119,13 @@ public class Usings
         var itemExternalId = Guid.Parse("4e3f185a-c9c6-40b9-85e9-9f1284d685ec");
         
         await _exatoPriceTableModule.DeleteItem(tableExternalId, itemExternalId);
+    }
+    
+    [Test] public async Task CalculatePrice_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("b22d4496-0e30-4a08-ab32-289cbc2e9258");
+        
+        var totalPrice = await _exatoPriceTableModule.CalculatePrice(tableExternalId);
+        Console.WriteLine(totalPrice);
     }
 }

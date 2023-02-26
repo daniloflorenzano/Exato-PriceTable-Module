@@ -11,26 +11,45 @@ public sealed class NonCumulativePriceDiscount : DiscountPrice
 
     public override decimal CalculateTotalPrice()
     {
-        var previousLimit = 0;
         var price = 0.0m;
         
         if (TotalItems < MinimalToApplyDiscount)
-            return ItemInitialPrice;
-        
-        for (int i = 0; i < AmountLimitsToApplyDiscount.Count; i++)
+            return TotalItems * ItemInitialPrice;
+
+        var itemsToCalcule = TotalItems;
+        var priceToAdd = ItemInitialPrice;
+        var totalLimits = AmountLimitsToApplyDiscount.Count;
+        var nItem = 1;
+
+        for (int i = 0; i < totalLimits; i++)
         {
-            var limit = AmountLimitsToApplyDiscount[i];
-            var priceWithDiscount = PriceSequence[i];
-
-            if (TotalItems + 1 > limit)
-                price += priceWithDiscount * ( limit - previousLimit );
-
-            previousLimit = limit;
+            for (int j = 1; j < itemsToCalcule; j++)
+            {
+                var priceWithDiscount = PriceSequence[i];
+                var currentLimit = AmountLimitsToApplyDiscount[i];
+                var nextLimit =  i + 1 == totalLimits ? currentLimit : AmountLimitsToApplyDiscount[i + 1];
+                
+                if (nItem <= currentLimit)
+                {
+                    price += priceToAdd;
+                    itemsToCalcule--;
+                    nItem++;
+                }
+                else if (nItem <= nextLimit)
+                {
+                    priceToAdd = priceWithDiscount;
+                    price += priceToAdd;
+                    itemsToCalcule--;
+                    nItem++;
+                }
+                else
+                    break;
+            }
         }
-
-        if (previousLimit == AmountLimitsToApplyDiscount.Last())
-            price += PriceSequence.Last() * ( TotalItems - previousLimit );
         
+        if (itemsToCalcule != 0)
+            price += itemsToCalcule * PriceSequence.Last();
+
         return price;
     }
 }
