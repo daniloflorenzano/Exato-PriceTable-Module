@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Enums;
+﻿using System.Text;
+using Domain.Entities.Enums;
 using Domain.Primitives;
 
 namespace Domain.Entities
@@ -23,43 +24,40 @@ namespace Domain.Entities
         /// <param name="active">Ativa: True (padrão), Inativa: False</param>
         public Table(string name, string? description, DateTime? expirationDate, DiscountType type, bool active = true)
         {
-            Name = FormatNameForSqlQuery(name);
+            Name = name;
             Description = description;
             ExpirationDate = expirationDate;
             Type = type;
             Active = active;
         }
-
-        public Table(string name, DiscountType type)
+        
+        public string SanitizedName()
         {
-            Name = name;
-            Type = type;
-        }
-
-        private string FormatNameForSqlQuery(string name)
-        {
-            return name.ToLower().Trim().Replace(" ", "_");
+            return Name.ToLower().Trim().Replace(" ", "_");
         }
         
-        public string? ExpirationDateToString()
-        {
-            if (ExpirationDate is null)
-                return null;
-            
-            return ExpirationDate.Value.ToString("yyyy-MM-dd HH:mm:ss");
-        }
-
-        public string CreationDateToString()
-        {
-            return CreationDate.ToString("yyyy-MM-dd HH:mm:ss");
-        }
-
         public override string ToString()
         {
-            var expirationDate = ExpirationDate.HasValue ? ExpirationDateToString() : "null";
+            var name = SanitizedName();
             
-            return $"Name: {Name}, Description: {Description}, Type: {Type}, Active: {Active}," +
-                   $" ExpirationDate: {expirationDate}, CreationDate: {CreationDateToString()}";
+            var builder = new StringBuilder();
+            builder.Append("Name: ");
+            builder.Append(name);
+            builder.Append(", Decription: ");
+            builder.Append(Description);
+            builder.Append(", Type: ");
+            builder.Append(Type);
+            builder.Append(", Active: ");
+            builder.Append(Active);
+            builder.Append(", ExpirationDate: ");
+            if (ExpirationDate.HasValue)
+                builder.Append(ExpirationDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+            else
+                builder.Append("null");
+            builder.Append(", CreationDate: ");
+            builder.Append(CreationDate.ToString("yyyy-MM-dd HH:mm:ss"));
+
+            return builder.ToString();
         }
     }
 }

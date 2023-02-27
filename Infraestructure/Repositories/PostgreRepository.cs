@@ -40,10 +40,12 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync($@"CREATE VIEW registered_tables AS
                 SELECT * FROM {_schema}.tables");
     }
-    
+
     public async Task CreateTable(Table table)
     {
-        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDateToString()}'" : "null";
+        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{FormatDateForSqlQuery(table.ExpirationDate)}'" : "null";
+        var tableCreationDate = FormatDateForSqlQuery(table.CreationDate);
+        var tableName = table.SanitizedName();
         
         var insertQuery = $"insert into {_schema}.tables(" +
                           "external_id," +
@@ -55,12 +57,12 @@ public class PostgreRepository : IRepository
                           "creation_date) " +
                           "values (" +
                           $"'{table.ExternalId}'," +
-                          $"'{table.Name}'," +
+                          $"'{tableName}'," +
                           $"'{table.Description}'," +
                           $"{(int)table.Type}," +
                           $"{table.Active}," +
                           $"{tableExpirationDate}," +
-                          $"'{table.CreationDateToString()}'" +
+                          $"'{tableCreationDate}'" +
                           ")";
 
         await _dbContext.Database.ExecuteSqlRawAsync(insertQuery);
@@ -76,12 +78,20 @@ public class PostgreRepository : IRepository
         
         await _dbContext.Database.ExecuteSqlRawAsync(createQuery);
     }
-
+    
     private string FormatDateForSqlQuery(DateTime date)
     {
         return date.ToString("yyyy-MM-dd HH:mm:ss");
     }
     
+    private string? FormatDateForSqlQuery(Nullable<DateTime> date)
+    {
+        if (date is null)
+            return null;
+            
+        return date.Value.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
     public async Task<List<Table>> ListTables()
     {
         var tables = await _dbContext.Tables.ToListAsync();
@@ -99,11 +109,12 @@ public class PostgreRepository : IRepository
 
     public async Task UpdateTable(Guid externalId, Table table)
     {
-        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{table.ExpirationDateToString()}'" : "null";
+        var tableExpirationDate = table.ExpirationDate.HasValue ? $"'{FormatDateForSqlQuery(table.ExpirationDate)}'" : "null";
         var existingTable = await GetTableByExternalId(externalId);
+        var tableName = table.SanitizedName();
 
         var updateQuery = $"update {_schema}.tables set " +
-          $"name = '{table.Name}', " +
+          $"name = '{tableName}', " +
           $"description = '{table.Description}', " +
           $"active = {table.Active}, " +
           $"expiration_date = {tableExpirationDate} " +
@@ -112,7 +123,7 @@ public class PostgreRepository : IRepository
         await _dbContext.Database.ExecuteSqlRawAsync(updateQuery);
 
         var oldName = existingTable.Name;
-        var renameQuery = $"alter table {_schema}.{oldName} rename to {table.Name};";
+        var renameQuery = $"alter table {_schema}.{oldName} rename to {tableName};";
 
         await _dbContext.Database.ExecuteSqlRawAsync(renameQuery);
     }

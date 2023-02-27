@@ -25,6 +25,10 @@ public class Usings
     public async Task ListTables_Should_Work()
     {
         var tables = await _exatoPriceTableModule.ListTables();
+        foreach (var table in tables)
+        {
+            Console.WriteLine(table);
+        }
     }
     
     [Test]
