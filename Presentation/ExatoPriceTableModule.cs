@@ -122,12 +122,12 @@ public class ExatoPriceTableModule
         return await itemHandler.ListAll();
     }
     
-    public async Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date)
+    public async Task<List<Item>> ListItems(Guid tableExternalId, DateTime startDate, DateTime endDate)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
-        return await itemHandler.ListSinceDate(date);
+        return await itemHandler.ListItemsInDateRange(startDate, endDate);
     }
     
     public async Task<Item> GetItemByExternalId(Guid tableExternalId, Guid itemExternalId)
@@ -154,19 +154,64 @@ public class ExatoPriceTableModule
         await itemHandler.Delete(itemExternalId);
     }
 
-    public async Task<decimal> CalculatePrice(Guid tableExtenalId)
+    public async Task<decimal> CalculatePrice(Guid tableExternalId)
     {
         InitiateDependencyContainer(out var repositoryFactory, out var logger);
 
         var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
-        var table = await tableHandler.GetByExternalId(tableExtenalId);
+        var table = await tableHandler.GetByExternalId(tableExternalId);
         var tableType = table.Type;
 
-        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExtenalId, _schema);
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
         var items = await itemHandler.ListAll();
 
         var priceHandler = new PriceHandler(items, tableType);
         return priceHandler.TotalPrice();
+    }
+    
+    public async Task<decimal> CalculatePrice(Guid tableExternalId, DateTime startDate, DateTime endDate)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        var table = await tableHandler.GetByExternalId(tableExternalId);
+        var tableType = table.Type;
+
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        var items = await itemHandler.ListItemsInDateRange(startDate, endDate);
+
+        var priceHandler = new PriceHandler(items, tableType);
+        return priceHandler.TotalPrice();
+    }
+
+    public async Task<decimal> CalculatePriceOfTheNextItem(Guid tableExternalId)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        var table = await tableHandler.GetByExternalId(tableExternalId);
+        var tableType = table.Type;
+
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        var items = await itemHandler.ListAll();
+
+        var priceHandler = new PriceHandler(items, tableType);
+        return priceHandler.PriceOfNextItem();
+    }
+    
+    public async Task<decimal> CalculatePriceOfTheNextItem(Guid tableExternalId, DateTime startDate, DateTime endDate)
+    {
+        InitiateDependencyContainer(out var repositoryFactory, out var logger);
+        
+        var tableHandler = new TableHandler(repositoryFactory, logger, _schema);
+        var table = await tableHandler.GetByExternalId(tableExternalId);
+        var tableType = table.Type;
+
+        var itemHandler = new ItemHandler(repositoryFactory, logger, tableExternalId, _schema);
+        var items = await itemHandler.ListItemsInDateRange(startDate, endDate);
+
+        var priceHandler = new PriceHandler(items, tableType);
+        return priceHandler.PriceOfNextItem();
     }
 
     private void InitiateDependencyContainer(out IRepositoryFactory repositoryFactory, out ILogger logger)

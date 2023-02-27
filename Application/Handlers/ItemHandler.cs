@@ -42,15 +42,15 @@ public class ItemHandler
         }
     }
     
-    public async Task<List<Item>> ListSinceDate(DateTime date)
+    public async Task<List<Item>> ListItemsInDateRange(DateTime startDate, DateTime endDate)
     {
         try
         {
-            if (date > DateTime.Now)
-                throw new CannotUseFutureDateException(date);
+            if (startDate > DateTime.Now)
+                throw new CannotUseFutureDateException(startDate);
 
             var repository = _repositoryFactory.Create(_schema);
-            var result = await repository.ListItemsSinceDate(_tableExternalId, date);
+            var result = await repository.ListItemsInDateRange(_tableExternalId, startDate, endDate);
 
             return result;
         }

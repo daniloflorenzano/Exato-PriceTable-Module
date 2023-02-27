@@ -14,7 +14,7 @@ public interface IRepository
 
     public Task CreateItem(Item item, Guid tableExternalId);
     public Task<List<Item>> ListItems(Guid tableExternalId);
-    public Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date);
+    public Task<List<Item>> ListItemsInDateRange(Guid tableExternalId, DateTime startDate, DateTime endDate);
     public Task<Item> GetItemByExternalId(Guid tableExternalId, Guid itemExternalId);
     public Task UpdateItem(Guid itemExternalId, Item item, Guid tableExternalId);
     public Task DeleteItem(Guid itemExternalId, Guid tableExternalId);

@@ -160,13 +160,14 @@ public class PostgreRepository : IRepository
         return items;
     }
 
-    public async Task<List<Item>> ListItemsSinceDate(Guid tableExternalId, DateTime date)
+    public async Task<List<Item>> ListItemsInDateRange(Guid tableExternalId, DateTime startDate, DateTime endDate)
     {
         var table = await GetTableByExternalId(tableExternalId);
         var tableName = table.Name;
-        var dateFormated = FormatDateForSqlQuery(date);
+        var startDateFormated = FormatDateForSqlQuery(startDate);
+        var endDateFormated = FormatDateForSqlQuery(endDate);
 
-        var query = $"select * from {_schema}.{tableName} where purchase_date > '{dateFormated}'";
+        var query = $"select * from {_schema}.{tableName} where purchase_date > '{startDateFormated}' and purchase_date < '{endDateFormated}'";
         var items = _dbContext.Items.FromSqlRaw(query).ToList();
         return items;
     }

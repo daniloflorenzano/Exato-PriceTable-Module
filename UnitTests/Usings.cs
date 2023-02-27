@@ -83,7 +83,7 @@ public class Usings
     {
         var externalId = Guid.Parse("b0206c4a-e22d-475c-b892-634ef7c2e5f5");
 
-        var items = await _exatoPriceTableModule.ListItemsSinceDate(externalId, DateTime.Parse("2023-03-03"));
+        var items = await _exatoPriceTableModule.ListItems(externalId, DateTime.Parse("2023-03-03"), DateTime.Today);
         foreach (var item in items)
         {
             Console.WriteLine(item);
@@ -127,5 +127,29 @@ public class Usings
         
         var totalPrice = await _exatoPriceTableModule.CalculatePrice(tableExternalId);
         Console.WriteLine(totalPrice);
+    }
+    
+    [Test] public async Task CalculatePriceInDateRange_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("b22d4496-0e30-4a08-ab32-289cbc2e9258");
+        
+        var totalPriceInAMonth = await _exatoPriceTableModule.CalculatePrice(tableExternalId, new DateTime(2022,02,01), DateTime.Today);
+        Console.WriteLine(totalPriceInAMonth);
+    }
+    
+    [Test] public async Task CalculatePriceOfTheNextItem_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("b22d4496-0e30-4a08-ab32-289cbc2e9258");
+        
+        var priceOfTheNextItem = await _exatoPriceTableModule.CalculatePriceOfTheNextItem(tableExternalId);
+        Console.WriteLine(priceOfTheNextItem);
+    }
+    
+    [Test] public async Task CalculatePriceOfTheNextItemInDateRange_Should_Work()
+    {
+        var tableExternalId = Guid.Parse("b22d4496-0e30-4a08-ab32-289cbc2e9258");
+        
+        var priceOfTheNextItem = await _exatoPriceTableModule.CalculatePriceOfTheNextItem(tableExternalId, new DateTime(2022,02,01), DateTime.Today);
+        Console.WriteLine(priceOfTheNextItem);
     }
 }

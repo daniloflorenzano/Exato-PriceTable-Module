@@ -90,4 +90,13 @@ public class PriceHandler
 
         return list;
     }
+
+    public decimal PriceOfNextItem()
+    {
+        if (_discountType is DiscountType.FixedPrice)
+            return _items[0].Price.InitialValue;
+
+        DiscountPrice discountHandler = new CumulativePriceDiscount(_items);
+        return discountHandler.CalculateNextUnitPrice();
+    }
 }
